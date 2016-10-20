@@ -1,3 +1,53 @@
+/**注册一个小程序 */
+declare function App(param: AppParam);
+
+/**指定小程序的生命周期函数等 */
+declare interface AppParam {
+    /**
+     * 生命周期函数--监听小程序初始化
+     * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
+     */
+    onLaunch?: Function;
+    /**
+     * 生命周期函数--监听小程序显示 
+     * 当小程序启动，或从后台进入前台显示，会触发 onShow
+     */
+    onShow?: Function;
+    /**
+     * 生命周期函数--监听小程序隐藏
+     * 当小程序从前台进入后台，会触发 onHide
+     */
+    onHide?: Function;
+    /**开发者可以添加任意的函数或数据到参数中，用 this 可以访问 */
+    [others: string]: any;
+}
+
+/**全局函数，可以获取到小程序实例 */
+declare function getApp();
+
+/**注册一个页面 */
+declare function Page(param: PageParam);
+
+/**指定页面的初始数据、生命周期函数、事件处理函数等 */
+declare interface PageParam {
+    /**页面的初始数据 */
+    data?: Object;
+    /**生命周期函数--监听页面加载 */
+    onLoad?: Function;
+    /**生命周期函数--监听页面初次渲染完成 */
+    onReady?: Function;
+    /**生命周期函数--监听页面显示 */
+    onShow?: Function
+    /**生命周期函数--监听页面隐藏 */;
+    onHide?: Function;
+    /**生命周期函数--监听页面卸载 */
+    onUnload?: Function;
+    /**页面相关事件处理函数--监听用户下拉动作 */
+    onPullDownRefreash?: Function;
+    /**开发者可以添加任意的函数或数据到参数中，用 this 可以访问 */
+    [others: string]: any;
+}
+
 declare var wx: WeApp.wx;
 
 declare namespace WeApp {
