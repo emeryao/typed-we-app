@@ -5,30 +5,33 @@ declare function App(param: AppParam);
 declare interface AppParam {
     /**
      * 生命周期函数--监听小程序初始化
-     * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
+     * 当小程序初始化完成时 会触发 onLaunch（全局只触发一次）
      */
     onLaunch?: Function;
     /**
      * 生命周期函数--监听小程序显示 
-     * 当小程序启动，或从后台进入前台显示，会触发 onShow
+     * 当小程序启动 或从后台进入前台显示 会触发 onShow
      */
     onShow?: Function;
     /**
      * 生命周期函数--监听小程序隐藏
-     * 当小程序从前台进入后台，会触发 onHide
+     * 当小程序从前台进入后台 会触发 onHide
      */
     onHide?: Function;
-    /**开发者可以添加任意的函数或数据到参数中，用 this 可以访问 */
+    /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
     [others: string]: any;
 }
 
-/**全局函数，可以获取到小程序实例 */
+/**全局函数 可以获取到小程序实例 */
 declare function getApp();
+
+/**获取当前页面栈的实例 以数组形式按栈的顺序给出 第一个元素为首页 最后一个元素为当前页面 */
+declare function getCurrentPages();
 
 /**注册一个页面 */
 declare function Page(param: PageParam);
 
-/**指定页面的初始数据、生命周期函数、事件处理函数等 */
+/**指定页面的初始数据 生命周期函数 事件处理函数等 */
 declare interface PageParam {
     /**页面的初始数据 */
     data?: Object;
@@ -44,7 +47,9 @@ declare interface PageParam {
     onUnload?: Function;
     /**页面相关事件处理函数--监听用户下拉动作 */
     onPullDownRefreash?: Function;
-    /**开发者可以添加任意的函数或数据到参数中，用 this 可以访问 */
+    /**页面上拉触底事件的处理函数 */
+    onReachBottom?: Function;
+    /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
     [others: string]: any;
 }
 
@@ -85,7 +90,7 @@ declare namespace WeApp {
         */
         sendSocketMessage(message: SocketMessage);
         /**接受 WebSocket 消息 */
-        onSocketMessage(callback: (res?: { data: string }) => void);
+        onSocketMessage(callback: (res?: { data: string | ArrayBuffer }) => void);
         /**关闭 WebSocket 连接 */
         closeSocket();
         /**监听 WebSocket 关闭 */
@@ -96,6 +101,8 @@ declare namespace WeApp {
         chooseImage(param: ChooseImageParam);
         /**预览图片 */
         previewImage(param: PreviewImageParam);
+        /**获取图片信息 */
+        getImageInfo(param: ImageInfoParam);
         /**
          * 开始录音
          * 当主动调用wx.stopRecord 或者录音超过1分钟时自动结束录音 返回录音文件的临时文件路径 
@@ -136,8 +143,23 @@ declare namespace WeApp {
         onBackgroundAudioStop(callback: (res?: any) => void);
         /**从相册选择视频 或者拍摄 */
         chooseVideo(param: ChooseVideoParam);
+        /**创建并返回 audio 上下文 audioContext 对象 */
+        createAudioContext(audioId: string): AudioContext;
+
+        // 文件
         /**保存文件 */
         saveFile(param: SaveFileParam);
+        /**获取本地已保存的文件列表 */
+        getSavedFileList(param: FileListParam);
+        /**获取本地文件的文件信息 */
+        getSavedFileInfo(param: FileInfoParam);
+        /**删除本地存储的文件 */
+        removeSavedFile(param: RemoveFileParam);
+        /**
+         * 新开页面打开文档
+         * 支持格式 doc/x,xls/x,ppt/x,pdf
+         */
+        openDocument(param: OpenDocumentParam);
 
         // 数据 API 列表 
         /**获取本地数据缓存 */
@@ -151,22 +173,34 @@ declare namespace WeApp {
         setStorage(param: SetStorageParam);
         /**将 data 存储在本地缓存中指定的 key 中 会覆盖掉原来该 key 对应的内容 这是一个同步接口 */
         setStorageSync(key: string, data: string | Object);
+        /**从本地缓存中异步移除指定key */
+        removeStorage(param: RemoveStorageParam);
+        /**从本地缓存中同步移除指定key */
+        removeStorageSync(key: string);
         /**清理本地数据缓存 */
         clearStorage();
         /**同步清理本地数据缓存 */
-        clearStorageSync()
+        clearStorageSync();
+        /**异步获取当前storage的相关信息 */
+        getStorageInfo(pram: StorageInfoParam);
+        /**同步获取当前storage的相关信息 */
+        getStorageInfoSync(): StorageInfo;
 
         // 位置 API 列表 
         /**获取当前的地理位置 速度 */
         getLocation(param: GetLocationParam);
         /**使用微信内置地图查看位置 */
         openLocation(param: OpenLocationParam);
+        /**打开地图选择位置 */
+        chooseLocation(param: ChooseLocationParam);
 
         // 设备 API 列表 
         /**获取网络类型 */
         getNetworkType(param: NetworkTypeParam);
         /**获取系统信息 */
         getSystemInfo(param: SystemInfoParam);
+        /**同步获取系统信息 */
+        getSystemInfoSync(): SystemInfo;
         /**
          * 监听重力感应数据
          * 频率 5次/秒
@@ -177,6 +211,18 @@ declare namespace WeApp {
          * 频率 5次/秒
          */
         onCompassChange(callback: (res?: CompassInfo) => void);
+        /**打电话 */
+        makePhoneCall(param: PhoneCallParam);
+
+        //交互反馈
+        /**显示消息提示框 */
+        showToast(param: ToastParam);
+        /**隐藏消息提示框 */
+        hideToast();
+        /**显示模态弹窗 */
+        showModal(param: ModalParam);
+        /**显示操作菜单 */
+        showActionSheet(param: ActionSheetParam);
 
         // 界面 API 列表
         /**设置当前页面标题 */
@@ -190,13 +236,16 @@ declare namespace WeApp {
         /**原窗口打开页面 */
         redirectTo(param: NavigateToParam);
         /**关闭当前页面 回退前一页面 */
-        navigateBack();
+        navigateBack(param?: { /**返回的页面数 如果 delta 大于现有页面数 则返回到首页 默认1 */delta: number });
         /**动画 */
         createAnimation(param: AnimationParam): Animation;
         /**创建绘图上下文 */
         createContext(): Context;
         /**绘图 */
         drawCanvas(param: DrawCanvasParam);
+        /**把当前画布的内容导出生成图片 并返回文件路径 */
+        canvasToTempFilePath(param: { canvasId: string });
+
         /**隐藏键盘 */
         hideKeyboard();
         /**停止下拉刷新动画 */
@@ -209,6 +258,8 @@ declare namespace WeApp {
         getUserInfo(param: UserInfoParam);
         /**发起微信支付 */
         requestPayment();
+        /**检查登陆态是否过期 */
+        checkSession(param: CallbackParam);
     }
 
     interface CallbackParam {
@@ -273,7 +324,7 @@ declare namespace WeApp {
 
     interface SocketMessage extends CallbackParam {
         /**需要发送的内容 */
-        data: string;
+        data: string | ArrayBuffer;
     }
 
     interface ChooseImageParam extends CallbackParam {
@@ -292,6 +343,12 @@ declare namespace WeApp {
         urls: Array<string>;
     }
 
+    interface ImageInfoParam extends CallbackParam {
+        /**图片的路径 可以是相对路径 临时文件路径 存储文件路径 */
+        src: string;
+        success?: (res?: { width: number, height: number }) => void;
+    }
+
     interface RecordParam extends CallbackParam {
         success?: (res?: { tempFilePath: string }) => void;
     }
@@ -302,7 +359,7 @@ declare namespace WeApp {
     }
 
     interface GetBackgroundAudioPlayerStateParam extends CallbackParam {
-        succcess?: (res?: BackgroundAudioPlayerState) => void;
+        success?: (res?: BackgroundAudioPlayerState) => void;
     }
 
     interface BackgroundAudioPlayerState {
@@ -338,6 +395,35 @@ declare namespace WeApp {
         success?: (res?: { savedFilePath?: string }) => void;
     }
 
+    interface FileListParam extends CallbackParam {
+        success?: (res?: { errMsg: string, fileList: Array<FileInfo> }) => void;
+    }
+
+    interface FileInfo {
+        /**文件的本地路径 */
+        filePath: string;
+        /**文件的保存时的时间戳 从1970/01/01 08:00:00到当前时间的秒数 */
+        createTime: number;
+        /**文件大小 单位B */
+        size: number;
+    }
+
+    interface FileInfoParam extends CallbackParam {
+        /**文件路径 */
+        filePath: string;
+        success?: (res?: { errMsg: string, size: number, createTime: number }) => void;
+    }
+
+    interface RemoveFileParam extends CallbackParam {
+        /**需要删除的文件路径 */
+        filePath: string;
+    }
+
+    interface OpenDocumentParam extends CallbackParam {
+        /**文件路径 可通过 downFile 获得 */
+        filePath: string;
+    }
+
     interface ChooseVideoParam extends CallbackParam {
         /**album 从相册选视频 camera 使用相机拍摄 默认为:['album', 'camera'] */
         sourceType?: Array<string>;
@@ -347,6 +433,15 @@ declare namespace WeApp {
         camera?: Array<string>;
         /**接口调用成功 返回视频文件的临时文件路径 */
         success?: (res?: VideoInfo) => void;
+    }
+
+    interface AudioContext {
+        /**播放 */
+        play();
+        /**暂停 */
+        pause();
+        /**跳转到指定位置 单位 s */
+        seek(position: number);
     }
 
     interface VideoInfo {
@@ -373,6 +468,24 @@ declare namespace WeApp {
         /**本地缓存中的指定的 key */
         key: string;
         success: (res?: { data: string }) => void;
+    }
+
+    interface RemoveStorageParam extends CallbackParam {
+        key: string;
+        success: (res?: { data: any }) => void;
+    }
+
+    interface StorageInfoParam extends CallbackParam {
+        success: (res?: { data: StorageInfo }) => void;
+    }
+
+    interface StorageInfo {
+        /**当前storage中所有的key */
+        keys: Array<string>;
+        /**当前占用的空间大小 单位kb */
+        currentSize: number;
+        /**限制的空间大小 单位kb */
+        limitSize: number;
     }
 
     interface GetLocationParam extends CallbackParam {
@@ -404,6 +517,21 @@ declare namespace WeApp {
         name?: string;
         /**地址的详细说明 */
         address?: string;
+    }
+
+    interface ChooseLocationParam extends CallbackParam {
+        success: (res?: ChoosedLoaction) => void;
+    }
+
+    interface ChoosedLoaction {
+        /**位置名称 */
+        name: string;
+        /**详细地址 */
+        address: string;
+        /**纬度 浮点数 范围为-90~90 负数表示南纬 */
+        latitude: number;
+        /**经度 浮点数 范围为-180~180 负数表示西经 */
+        longitude: number
     }
 
     interface NetworkTypeParam extends CallbackParam {
@@ -441,6 +569,58 @@ declare namespace WeApp {
     interface CompassInfo {
         /**面对的方向度数 */
         direction: number;
+    }
+
+    interface PhoneCallParam extends CallbackParam {
+        /**需要拨打的电话号码 */
+        phoneNumber: string;
+        success: () => void;
+    }
+
+    interface ToastParam extends CallbackParam {
+        /**提示的内容 */
+        title: string;
+        /**图标 只支持 success|loading */
+        icon?: string;
+        /**提示的延迟时间 单位毫秒 默认 1500 最大为10000 */
+        duration?: string;
+    }
+
+    interface ModalParam extends CallbackParam {
+        /**提示的标题 */
+        title: string;
+        /**提示的内容 */
+        content: string;
+        /**是否显示取消按钮 默认为 false */
+        showCancel?: boolean;
+        /**取消按钮的文字 默认为 取消 */
+        cancelText?: string;
+        /**取消按钮的文字颜色 默认为 #000000 */
+        cancelColor?: string;
+        /**确定按钮的文字 默认为 确定 */
+        confirmText?: string;
+        /**确定按钮的文字颜色 默认为 #3CC51F */
+        confirmColor?: string;
+        /**
+         * 接口调用成功的回调函数
+         * 返回res.confirm==1时 表示用户点击确定按钮
+         */
+        success?: (res?: { confirm: number }) => void;
+    }
+
+    interface ActionSheetParam extends CallbackParam {
+        /**按钮的文字数组 数组长度最大为10个 */
+        itemList: Array<string>;
+        /**按钮的文字颜色 默认为 #000000 */
+        itemColor?: string;
+        success?: (res?: ActionSheetResponse) => void;
+    }
+
+    interface ActionSheetResponse {
+        /**用户是否取消选择 */
+        cancel: boolean;
+        /**用户点击的按钮 从上到下的顺序 从0开始 */
+        tapIndex: number;
     }
 
     interface NavigationBarTitleParam extends CallbackParam {
@@ -670,7 +850,7 @@ declare namespace WeApp {
          * @param y 矩形路径左上角的y坐标
          * @param radius 矩形路径的宽度
          * @param startAngle 起始弧度 0到2π
-         * @param sweepAngle 从起始弧度开始，扫过的弧度 0到2π
+         * @param sweepAngle 从起始弧度开始 扫过的弧度 0到2π
          */
         arc(x: number, y: number, radius: number, startAngle: number, sweepAngle: number);
         /**
@@ -732,7 +912,7 @@ declare namespace WeApp {
     }
 
     interface DrawCanvasParam {
-        /**画布标识，传入 <canvas/> 的 cavas-id */
+        /**画布标识 传入 <canvas/> 的 cavas-id */
         canvasId: string;
         /**
          * 绘图动作数组
@@ -743,7 +923,7 @@ declare namespace WeApp {
     }
 
     interface LoginParam extends CallbackParam {
-        succcess?: (res?: LoginResult) => void;
+        success?: (res?: LoginResult) => void;
     }
 
     interface LoginResult {
