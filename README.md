@@ -28,4 +28,4 @@ wx.drawCanvas({
 ```
 
 ## Last Update
-2016.10.28
+2016.11.01
