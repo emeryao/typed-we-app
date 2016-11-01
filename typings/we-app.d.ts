@@ -145,6 +145,8 @@ declare namespace WeApp {
         chooseVideo(param: ChooseVideoParam);
         /**创建并返回 audio 上下文 audioContext 对象 */
         createAudioContext(audioId: string): AudioContext;
+        /**创建并返回 video 上下文 videoContext 对象 */
+        createVideoContext(videoId: string): VideoContext;
 
         // 文件
         /**保存文件 */
@@ -442,6 +444,17 @@ declare namespace WeApp {
         pause();
         /**跳转到指定位置 单位 s */
         seek(position: number);
+    }
+
+    interface VideoContext {
+        /**播放 */
+        play();
+        /**暂停 */
+        pause();
+        /**跳转到指定位置 单位 s */
+        seek(position: number);
+        /**发送弹幕 danmu 包含两个属性 text,color */
+        sendDanmu(danmu: { text: string, color: string });
     }
 
     interface VideoInfo {
