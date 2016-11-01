@@ -273,7 +273,7 @@ declare namespace WeApp {
         complete?: Function;
     }
 
-    interface RequestParam {
+    interface RequestParam extends CallbackParam {
         /**开发者服务器接口地址 */
         url: string;
         /**请求的参数 */
