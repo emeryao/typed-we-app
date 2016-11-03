@@ -167,14 +167,14 @@ declare namespace WeApp {
         /**获取本地数据缓存 */
         getStorage(param: GetStorageParam);
         /**从本地缓存中同步获取指定 key 对应的内容 */
-        getStorageSync(key: string): string;
+        getStorageSync(key: string): any;
         /**
          * 设置本地数据缓存
          * 将数据存储在本地缓存中指定的 key 中会覆盖掉原来该 key 对应的内容 这是一个异步接口
          */
         setStorage(param: SetStorageParam);
         /**将 data 存储在本地缓存中指定的 key 中 会覆盖掉原来该 key 对应的内容 这是一个同步接口 */
-        setStorageSync(key: string, data: string | Object);
+        setStorageSync(key: string, data: any);
         /**从本地缓存中异步移除指定key */
         removeStorage(param: RemoveStorageParam);
         /**从本地缓存中同步移除指定key */
@@ -480,13 +480,13 @@ declare namespace WeApp {
         /**本地缓存中的指定的 key */
         key: string;
         /**需要存储的内容 */
-        data: string | Object;
+        data: any;
     }
 
     interface GetStorageParam extends CallbackParam {
         /**本地缓存中的指定的 key */
         key: string;
-        success: (res?: { data: string }) => void;
+        success: (res?: { data: any }) => void;
     }
 
     interface RemoveStorageParam extends CallbackParam {
