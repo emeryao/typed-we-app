@@ -1,5 +1,7 @@
 {
-  "name": "typed-we-app",
-  "dependencies": {},
-  "globalDependencies": {}
+    "name": "we-app",
+    "main": "we-app.d.ts",
+    "homepage": "https://mp.weixin.qq.com/debug/wxadoc/dev/index.html",
+    "global": true,
+    "version": "1.0.0"
 }
