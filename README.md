@@ -2,7 +2,11 @@
 [TypeScript](http://www.typescriptlang.org) declaration file for WeApp API
 
 ## Install
-Get the declaration [file](./we-app.d.ts) under `typings` and copy/paste to your working folder
+With [`typings`](https://github.com/typings/typings) installed
+```batch
+typings install global~we-app -SG
+```
+Or find the declaration [file](./we-app.d.ts) and include it to your project
 
 ## About
 Based on the official WeApp API [document](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.10.102800`
