@@ -2,11 +2,15 @@
 [TypeScript](http://www.typescriptlang.org) declaration file for WeApp API
 
 ## Install
-With [`typings`](https://github.com/typings/typings) installed
-```batch
-typings install global~we-app -SG
-```
-Or find the declaration [file](./we-app.d.ts) and include it to your project
+* With [`typings`](https://github.com/typings/typings) installed
+    ```batch
+    typings install env~we-app -SG
+    ```
+    Or
+    ```batch
+    typings install github:Emeryao/typed-we-app -SG
+    ```
+* Or get the declaration [file](./we-app.d.ts) and include it to your project
 
 ## About
 Based on the official WeApp API [document](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.10.102800`
@@ -32,4 +36,4 @@ wx.drawCanvas({
 ```
 
 ## Last Update
-2016.11.09
+2016.11.10
