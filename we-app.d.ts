@@ -602,7 +602,7 @@ declare namespace WeApp {
         /**图标 只支持 success|loading */
         icon?: string;
         /**提示的延迟时间 单位毫秒 默认 1500 最大为10000 */
-        duration?: string;
+        duration?: number;
     }
 
     interface ModalParam extends CallbackParam {
