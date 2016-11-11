@@ -283,11 +283,11 @@ declare namespace WeApp {
         /**默认为 GET 有效值:OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT */
         method?: string;
         /**收到开发者服务成功返回的回调函数 res = { data: '开发者服务器返回的内容' } */
-        success?: (res?: { data: HttpResponse }) => void;
+        success?: (res?: HttpResponse) => void;
     }
 
     interface HttpResponse {
-        data: any;
+        data?: any;
         errMsg: string;
         statusCode: number;
     }
