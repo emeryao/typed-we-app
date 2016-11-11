@@ -2,11 +2,12 @@
 [TypeScript](http://www.typescriptlang.org) declaration file for WeApp API
 
 ## Install
-* With [`typings`](https://github.com/typings/typings) installed
+* With [`typings`](https://github.com/typings/typings) installed  
+
     ```batch
     typings install env~we-app -SG
-    ```
-    Or
+    ```  
+    Or  
     ```batch
     typings install github:Emeryao/typed-we-app -SG
     ```
