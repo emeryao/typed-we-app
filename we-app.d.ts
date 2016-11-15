@@ -259,7 +259,7 @@ declare namespace WeApp {
         /**获取用户信息 */
         getUserInfo(param: UserInfoParam);
         /**发起微信支付 */
-        requestPayment();
+        requestPayment(param: RequestPaymentParam);
         /**检查登陆态是否过期 */
         checkSession(param: CallbackParam);
     }
