@@ -1135,10 +1135,10 @@ declare namespace WeApp {
     /**自定以分享内容 */
     interface PageShareData {
         /**分享标题 默认 当前小程序名称 */
-        title: string;
+        title?: string;
         /**分享描述 默认 当前小程序名称 */
-        desc: string;
+        desc?: string;
         /**分享路径 当前页面 path 必须是以 / 开头的完整路径 */
-        path: string;
+        path?: string;
     }
 }
