@@ -31,6 +31,11 @@ declare namespace WeApp {
          * 当小程序从前台进入后台 会触发 onHide
          */
         onHide?: Function;
+        /**
+         * 错误监听函数
+         * 当小程序发生脚本错误 或者 api 调用失败时 会触发 onError 并带上错误信息
+         */
+        onError?: Function;
         /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
         [others: string]: any;
     }
@@ -53,6 +58,14 @@ declare namespace WeApp {
         onPullDownRefreash?: Function;
         /**页面上拉触底事件的处理函数 */
         onReachBottom?: Function;
+        /**
+         * 设置该页面的分享信息
+         * * 只有定义了此事件处理函数，右上角菜单才会显示“分享”按钮
+         * * 用户点击分享按钮的时候会调用
+         * * 此事件需要 return 一个 Object，用于自定以分享内容
+         */
+        onShareAppMessage?: () => PageShareData;
+
         /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
         [others: string]: any;
     }
@@ -205,6 +218,8 @@ declare namespace WeApp {
         openLocation(param: OpenLocationParam);
         /**打开地图选择位置 */
         chooseLocation(param: ChooseLocationParam);
+        /**创建并返回 map 上下文 mapContext 对象 */
+        createMapContext(mapId: string);
 
         // 设备 API 列表 
         /**获取网络类型 */
@@ -251,12 +266,10 @@ declare namespace WeApp {
         navigateBack(param?: { /**返回的页面数 如果 delta 大于现有页面数 则返回到首页 默认1 */delta: number });
         /**动画 */
         createAnimation(param: AnimationParam): Animation;
-        /**创建绘图上下文 */
-        createContext(): Context;
-        /**绘图 */
-        drawCanvas(param: DrawCanvasParam);
         /**把当前画布的内容导出生成图片 并返回文件路径 */
         canvasToTempFilePath(param: { canvasId: string });
+        /**创建 canvas 绘图上下文(指定 canvasId) */
+        createCanvasContext(canvasId: string): CanvasContext;
 
         /**隐藏键盘 */
         hideKeyboard();
@@ -272,6 +285,10 @@ declare namespace WeApp {
         requestPayment(param: RequestPaymentParam);
         /**检查登陆态是否过期 */
         checkSession(param: CallbackParam);
+        /**跳转到 tabBar 页面 并关闭其他所有非 tabBar 页面 */
+        switchTab(param: SwitchTabParam);
+        /**调起客户端扫码界面 扫码成功后返回对应的结果 */
+        scanCode(param: ScanCodeParam);
     }
 
     interface CallbackParam {
@@ -454,6 +471,8 @@ declare namespace WeApp {
     }
 
     interface AudioContext {
+        /**设置音频的地址 */
+        setSrc(src: string);
         /**播放 */
         play();
         /**暂停 */
@@ -584,6 +603,10 @@ declare namespace WeApp {
         language: string;
         /**微信版本号 */
         version: string;
+        /**操作系统版本 */
+        system: string;
+        /**客户端平台 */
+        platform: string;
     }
 
     interface AccelerometerInfo {
@@ -613,6 +636,8 @@ declare namespace WeApp {
         icon?: string;
         /**提示的延迟时间 单位毫秒 默认 1500 最大为10000 */
         duration?: number;
+        /**是否显示透明蒙层 防止触摸穿透 默认 false */
+        mask?: boolean;
     }
 
     interface ModalParam extends CallbackParam {
@@ -622,11 +647,11 @@ declare namespace WeApp {
         content: string;
         /**是否显示取消按钮 默认为 false */
         showCancel?: boolean;
-        /**取消按钮的文字 默认为 取消 */
+        /**取消按钮的文字 默认为 取消 最多 4 个字符 */
         cancelText?: string;
         /**取消按钮的文字颜色 默认为 #000000 */
         cancelColor?: string;
-        /**确定按钮的文字 默认为 确定 */
+        /**确定按钮的文字 默认为 确定 最多 4 个字符 */
         confirmText?: string;
         /**确定按钮的文字颜色 默认为 #3CC51F */
         confirmColor?: string;
@@ -780,7 +805,7 @@ declare namespace WeApp {
      * context跟<canvas/>不存在对应关系
      * 一个context生成画布的绘制动作数组可以应用于多个<canvas/>
      */
-    interface Context {
+    interface CanvasContext {
         /**获取当前context上存储的绘图动作 */
         getActions(): Array<any>;
         /**清空当前的存储绘图动作 */
@@ -874,14 +899,15 @@ declare namespace WeApp {
          */
         rect(x: number, y: number, width: number, height: number);
         /**
-         * 添加一个弧形路径到当前路径 顺时针绘制
-         * @param x 矩形路径左上角的x坐标
-         * @param y 矩形路径左上角的y坐标
-         * @param radius 矩形路径的宽度
-         * @param startAngle 起始弧度 0到2π
-         * @param sweepAngle 从起始弧度开始 扫过的弧度 0到2π
+         * 画一条弧线
+         * @param x 圆的x坐标
+         * @param y 圆的y坐标
+         * @param r 圆的半径
+         * @param sAngle 起始弧度 单位弧度(在3点钟方向)
+         * @param eAngle 终止弧度
+         * @param counterclockwise 指定弧度的方向是逆时针还是顺时针 默认是false 即顺时针
          */
-        arc(x: number, y: number, radius: number, startAngle: number, sweepAngle: number);
+        arc(x: number, y: number, r: number, sAngle: number, eAngle: number, counterclockwise?: boolean);
         /**
          * 创建二次贝塞尔曲线路径
          * @param cpx 贝塞尔控制点的x坐标
@@ -900,7 +926,6 @@ declare namespace WeApp {
          * @param y 结束点的y坐标
          */
         bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number);
-
         /**
          * 设置纯色填充
          * @param color 设置为填充样式的颜色 'rgb(255, 0, 0)'或'rgba(255, 0, 0, 0.6)'或'#ff0000'格式的颜色字符串
@@ -938,6 +963,45 @@ declare namespace WeApp {
          * 连接处将以 lineJoin 为 bevel 来显示
          */
         setMiterLimit(miterLimit: number);
+        /**
+         * 填充一个矩形
+         * @param x 矩形路径左上角的x坐标
+         * @param y 矩形路径左上角的y坐标
+         * @param width 矩形路径的宽度
+         * @param height 矩形路径的高度
+         */
+        fillRect(x: number, y: number, width: number, height: number);
+        /**
+         * 画一个矩形(非填充)
+         * @param x 矩形路径左上角的x坐标
+         * @param y 矩形路径左上角的y坐标
+         * @param width 矩形路径的宽度
+         * @param height 矩形路径的高度
+         */
+        strokeRect(x: number, y: number, width: number, height: number);
+        /**
+         * 创建一个线性的渐变颜色
+         * @param x0 起点的x坐标
+         * @param y0 起点的y坐标
+         * @param x1 终点的x坐标
+         * @param y1 终点的y坐标
+         */
+        createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+        /**
+         * 创建一个圆形的渐变颜色
+         * @param x 圆心的x坐标
+         * @param y 圆心的y坐标
+         * @param r 圆的半径
+         */
+        createCircularGradient(x: number, y: number, r: number): CanvasGradient;
+    }
+
+    interface CanvasGradient {
+        /**
+         * 指定颜色渐变点的位置和颜色
+         * @param position 位置必须位于0到1之间
+         */
+        addColorStop(position: number, color: string);
     }
 
     interface DrawCanvasParam {
@@ -1049,5 +1113,32 @@ declare namespace WeApp {
          * 自定义事件所携带的数据 如表单组件的提交事件会携带用户的输入 媒体的错误事件会携带错误信息
          */
         detail: any;
+    }
+
+    interface SwitchTabParam extends CallbackParam {
+        /**需要跳转的 tabBar 页面的路径(需在 app.json 的 tabBar 字段定义的页面) 路径后不能带参数 */
+        url: string;
+    }
+
+    interface ScanCodeParam extends CallbackParam {
+        success?: (res?: { result: string }) => void;
+    }
+
+    /**通过 mapId 跟一个 <map/> 组件绑定 通过它可以操作对应的 <map/> 组件 */
+    interface MapContext {
+        /**获取当前地图中心的经纬度 返回的是 gcj02 坐标系 可以用于 wx.openLocation */
+        getCenterLocation(param: GetLocationParam);
+        /**将地图中心移动到当前定位点 需要配合map组件的show-location使用 */
+        moveToLocation();
+    }
+
+    /**自定以分享内容 */
+    interface PageShareData {
+        /**分享标题 默认 当前小程序名称 */
+        title: string;
+        /**分享描述 默认 当前小程序名称 */
+        desc: string;
+        /**分享路径 当前页面 path 必须是以 / 开头的完整路径 */
+        path: string;
     }
 }

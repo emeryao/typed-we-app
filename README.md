@@ -5,17 +5,17 @@
 * With [`typings`](https://github.com/typings/typings) installed  
 
     ```batch
-    typings install env~we-app -SG
+    typings install github:Emeryao/typed-we-app -SG
     ```  
     Or  
     ```batch
-    typings install github:Emeryao/typed-we-app -SG
+    typings install env~we-app -SG
     ```
 
 * Or get the declaration file [here](./we-app.d.ts) and include it to your project
 
 ## About
-Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.10.102800`
+Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.11.122100`
 
 ## Sample
 * TypeScript
@@ -38,4 +38,4 @@ wx.drawCanvas({
 ```
 
 ## Last Update
-2016.11.15
+2016.12.21
