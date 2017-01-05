@@ -659,7 +659,7 @@ declare namespace WeApp {
          * 接口调用成功的回调函数
          * 返回res.confirm==1时 表示用户点击确定按钮
          */
-        success?: (res?: { confirm: number }) => void;
+        success?: (res?: { confirm: boolean }) => void;
     }
 
     interface ActionSheetParam extends CallbackParam {
@@ -1121,7 +1121,18 @@ declare namespace WeApp {
     }
 
     interface ScanCodeParam extends CallbackParam {
-        success?: (res?: { result: string }) => void;
+        success?: (res?: ScanCodeResult) => void;
+    }
+
+    interface ScanCodeResult {
+        /**所扫码的内容 */
+        result: string;
+        /**所扫码的类型 */
+        scanType: string;
+        /**所扫码的字符集 */
+        charSet: string;
+        /**当所扫的码为当前小程序的合法二维码时 会返回此字段 内容为二维码携带的 path */
+        path: string;
     }
 
     /**通过 mapId 跟一个 <map/> 组件绑定 通过它可以操作对应的 <map/> 组件 */

@@ -15,7 +15,7 @@
 * Or get the declaration file [here](./we-app.d.ts) and include it to your project
 
 ## About
-Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.11.122100`
+Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.12.130400`
 
 ## Sample
 * TypeScript
@@ -38,4 +38,4 @@ wx.drawCanvas({
 ```
 
 ## Last Update
-2016.12.21
+2017.01.05
