@@ -6,16 +6,17 @@
 
     ```batch
     typings install github:Emeryao/typed-we-app -SG
-    ```  
-    Or  
-    ```batch
+
+    or
+    
     typings install env~we-app -SG
     ```
 
 * Or get the declaration file [here](./we-app.d.ts) and include it to your project
 
 ## About
-Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/) version `0.12.130400`
+Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/)   
+Version `0.15.152900`
 
 ## Sample
 * TypeScript
@@ -38,4 +39,4 @@ wx.drawCanvas({
 ```
 
 ## Last Update
-2017.01.05
+`2017.03.30`

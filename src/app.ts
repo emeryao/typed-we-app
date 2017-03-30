@@ -5,11 +5,14 @@ wx.request({
     }
 });
 
-let ctx = wx.createContext();
+let ctx = wx.createCanvasContext('');
 ctx.fillText('hello', 0, 0);
 
 let actions = ctx.getActions();
-wx.drawCanvas({
-    canvasId: 'canvas-id',
-    actions
+
+wx.getBLEDeviceServices({
+    deviceId: '',
+    success: (res) => {
+        res.services[0].uuid;
+     }
 });
