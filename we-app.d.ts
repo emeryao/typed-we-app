@@ -268,6 +268,16 @@ declare namespace WeApp {
         createAnimation(param: AnimationParam): Animation;
         /**把当前画布的内容导出生成图片 并返回文件路径 */
         canvasToTempFilePath(param: { canvasId: string });
+        /**
+       * @deprecated 不推荐使用
+       * 创建绘图上下文
+       */
+        createContext(): CanvasContext;
+        /**
+         * @deprecated 不推荐使用
+         * 绘图
+         */
+        drawCanvas(param: DrawCanvasParam);
         /**创建 canvas 绘图上下文(指定 canvasId) */
         createCanvasContext(canvasId: string): CanvasContext;
 
@@ -370,9 +380,21 @@ declare namespace WeApp {
         onNetworkStatusChange(callback: (res: { isConnected: boolean; networkType: string; }) => void);
 
         /**显示分享按钮 */
-        showShareMenu(param: CallbackParam);
+        showShareMenu(param: ShareMenuParam);
         /**隐藏分享按钮 */
         hideShareMenu(param: CallbackParam);
+        /**获取分享详细信息 */
+        getShareInfo(param: ShareInfoParam);
+
+        /**获取第三方平台自定义的数据字段 */
+        getExtConfig(param: ExtConfigParam);
+        /**获取第三方平台自定义的数据字段的同步接口 */
+        getExtConfigSync(): object;
+        /**
+         * 判断小程序的API 回调 参数 组件等是否在当前版本可用
+         * @param param 使用${API}.${method}.${param}.${options}或者${component}.${attribute}.${option}方式来调用
+         */
+        canIUse(param: string);
     }
 
     interface CallbackParam {
@@ -383,7 +405,7 @@ declare namespace WeApp {
         /**接口调用结束的回调函数(调用成功/失败都会执行) */
         complete?: Function;
     }
-    
+
     interface CallbackWithErrMsgParam extends CallbackParam {
         success?: (res?: {/**成功：ok，错误：详细信息 */errMsg: string }) => void;
     }
@@ -1256,10 +1278,11 @@ declare namespace WeApp {
         desc?: string;
         /**分享路径 当前页面 path 必须是以 / 开头的完整路径 */
         path?: string;
+        success: (res: { errMsg: string; shareTickets: Array<string> }) => void;
     }
 
-    interface BluetoothAdapterStateParam extends CallbackParam {        
-         success?: (res?: { adapterState: AdapterState, /**成功：ok，错误：详细信息 */errMsg: string }) => void;
+    interface BluetoothAdapterStateParam extends CallbackParam {
+        success?: (res?: { adapterState: AdapterState, /**成功：ok，错误：详细信息 */errMsg: string }) => void;
     }
 
     /**蓝牙适配器状态信息 */
@@ -1317,22 +1340,22 @@ declare namespace WeApp {
         deviceId: string;
         /**蓝牙服务 uuid */
         serviceId: string;
-        success: (res: { characteristics: Array<{ uuid: string ; properties: { read: boolean; write: boolean; notify: boolean; indicate: boolean; } }> ; errMsg: string; }) => void;
+        success: (res: { characteristics: Array<{ uuid: string; properties: { read: boolean; write: boolean; notify: boolean; indicate: boolean; } }>; errMsg: string; }) => void;
     }
 
     interface BLECharacteristicValueParam extends CallbackParam {
-         /**蓝牙设备 id 参考 device 对象 */
+        /**蓝牙设备 id 参考 device 对象 */
         deviceId: string;
         /**蓝牙服务 uuid */
         serviceId: string;
         /**蓝牙特征值的 uuid */
         characteristicId: string;
         success: (res: { characteristic: { characteristicId: string; serviceId: object; value: ArrayBuffer; }; errMsg: string; }) => void;
-    } 
+    }
 
     interface WriteBLECharacteristicValueParam extends CallbackWithErrMsgParam {
         /**蓝牙设备 id */
-         deviceId: string;
+        deviceId: string;
         /**蓝牙特征值对应服务的 uuid */
         serviceId: string;
         /**蓝牙特征值的 uuid */
@@ -1343,11 +1366,11 @@ declare namespace WeApp {
 
     interface BLECharacteristicValueChangedParam extends CallbackWithErrMsgParam {
         /**蓝牙设备 id */
-         deviceId: string;
+        deviceId: string;
         /**蓝牙特征值对应服务的 uuid */
         serviceId: string;
         /**蓝牙特征值的 uuid */
-        characteristicId: string;        
+        characteristicId: string;
         state: boolean;
     }
 
@@ -1355,7 +1378,7 @@ declare namespace WeApp {
         success: (res?: AddressData) => void;
     }
 
-    interface  AddressData {
+    interface AddressData {
         /**获取编辑收货地址成功返回 'openAddress:ok' */
         errMsg?: string;
         /**收货人姓名 */
@@ -1413,5 +1436,31 @@ declare namespace WeApp {
         query: object;
         /**打开小程序的场景值 */
         scene: number;
+        shareTicket: string;
+    }
+
+    interface ShareInfoParam extends CallbackParam {
+        shareTicket: string;
+        success: (res: {
+            /**错误信息 */
+            errMsg: string;
+            /**不包括敏感信息的原始数据字符串 用于计算签名 */
+            rawData: string;
+            /**使用sha1(rawData+sessionkey)得到字符串 用于校验分享信息 */
+            signature: string;
+            /**包括敏感数据在内的完整分享信息的加密数据 */
+            encryptedData: string;
+            /**加密算法的初始向量 */
+            iv: string;
+        }) => void;
+    }
+
+    interface ExtConfigParam extends CallbackParam {
+        success: (res: { errMsg: string; extConfig: object }) => void;
+    }
+
+    interface ShareMenuParam extends CallbackParam {
+        /**是否使用带 shareTicket 的分享 */
+        withShareTicket?: boolean;
     }
 }
