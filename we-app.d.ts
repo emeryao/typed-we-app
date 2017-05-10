@@ -1274,7 +1274,7 @@ declare namespace WeApp {
         desc?: string;
         /**分享路径 当前页面 path 必须是以 / 开头的完整路径 */
         path?: string;
-        success: (res: { errMsg: string; shareTickets: Array<string> }) => void;
+        success?: (res: { errMsg: string; shareTickets: Array<string> }) => void;
     }
 
     interface BluetoothAdapterStateParam extends CallbackParam {
