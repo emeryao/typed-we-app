@@ -55,7 +55,7 @@ declare namespace WeApp {
         /**生命周期函数--监听页面卸载 */
         onUnload?: Function;
         /**页面相关事件处理函数--监听用户下拉动作 */
-        onPullDownRefreash?: Function;
+        onPullDownRefresh?: Function;
         /**页面上拉触底事件的处理函数 */
         onReachBottom?: Function;
         /**
@@ -324,7 +324,7 @@ declare namespace WeApp {
         /**断开与低功耗蓝牙设备的连接 */
         closeBLEConnection(param: BLEConnectionParam);
         /**监听低功耗蓝牙连接的错误事件 包括设备丢失 连接异常断开等等 */
-        onBLEConnectionStateChanged(callback: (res: { deviceId: string; connected: boolean }) => void);
+        onBLEConnectionStateChange(callback: (res: { deviceId: string; connected: boolean }) => void);
         /**获取蓝牙设备所有 service */
         getBLEDeviceServices(param: BLEDeviceServicesParam);
         /**获取蓝牙设备所有 characteristic */
@@ -334,13 +334,9 @@ declare namespace WeApp {
         /**向低功耗蓝牙设备特征值中写入二进制数据 */
         writeBLECharacteristicValue(param: WriteBLECharacteristicValueParam);
         /**启用低功耗蓝牙设备特征值变化时的 notify 功能 */
-        notifyBLECharacteristicValueChanged(param: BLECharacteristicValueChangedParam);
+        notifyBLECharacteristicValueChange(param: BLECharacteristicValueChangedParam);
         /**监听低功耗蓝牙设备的特征值变化 必须先启用notify */
-        onBLECharacteristicValueChange(callback: () => void);
-        /**监听低功耗蓝牙连接的错误事件 */
-        onBLEConnectionStateChanged(callback: (res: { deviceId: string; connected: boolean; }) => void);
-        /**监听低功耗蓝牙设备的特征值变化 */
-        onBLECharacteristicValueChange(callback: (res: { deviceId: string; connected: boolean; characteristicId: string; value: Array<any> }) => void);
+        onBLECharacteristicValueChange(callback: (res: { deviceId: string; connected: boolean; characteristicId: string; value: ArrayBuffer }) => void);
 
         /**调起用户编辑收货地址原生界面 并在编辑完成后返回用户选择的地址 */
         chooseAddress(param: AddressParam);

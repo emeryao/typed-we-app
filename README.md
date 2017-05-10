@@ -6,17 +6,13 @@
 
     ```batch
     typings install github:Emeryao/typed-we-app -SG
-
-    or
-    
-    typings install env~we-app -SG
     ```
 
 * Or get the declaration file [here](./we-app.d.ts) and include it to your project
 
 ## About
 Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/)   
-Version `0.15.152900`
+Version `0.17.170900`
 
 ## Sample
 * TypeScript
@@ -28,7 +24,7 @@ wx.request({
     }
 });
 
-let ctx = wx.createContext();
+let ctx = wx.createCanvasContext();
 ctx.fillText('hello', 0, 0);
 
 let actions = ctx.getActions();
@@ -36,7 +32,14 @@ wx.drawCanvas({
     canvasId: 'canvas-id',
     actions
 });
+
+wx.getBLEDeviceServices({
+    deviceId: '',
+    success: (res) => {
+        console.log(res.services[0].uuid);
+    },
+});
 ```
 
 ## Last Update
-`2017.03.30`
+`2017.05.10`
