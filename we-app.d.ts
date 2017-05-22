@@ -267,15 +267,15 @@ declare namespace WeApp {
         /**动画 */
         createAnimation(param: AnimationParam): Animation;
         /**把当前画布的内容导出生成图片 并返回文件路径 */
-        canvasToTempFilePath(param: { canvasId: string });
+        canvasToTempFilePath(param: CanvasToTempFilePathParam);
         /**
        * @deprecated 不推荐使用
-       * 创建绘图上下文
+       * @description 创建绘图上下文
        */
         createContext(): CanvasContext;
         /**
          * @deprecated 不推荐使用
-         * 绘图
+         * @description 绘图
          */
         drawCanvas(param: DrawCanvasParam);
         /**创建 canvas 绘图上下文(指定 canvasId) */
@@ -343,6 +343,10 @@ declare namespace WeApp {
 
         /**调起客户端小程序设置界面 返回用户设置的操作结果 */
         openSetting(param: SettingParam);
+        /**获取用户的当前设置 */
+        getSetting(param: SettingParam);
+        /**提前授权 */
+        authorize(param: AuthorizeParam);
 
         /**关闭所有页面 打开到应用内的某个页面 */
         reLaunch(param: ReLaunchParam);
@@ -381,6 +385,8 @@ declare namespace WeApp {
         hideShareMenu(param: CallbackParam);
         /**获取分享详细信息 */
         getShareInfo(param: ShareInfoParam);
+        /**更新转发属性 */
+        updateShareMenu(param: ShareMenuParam);
 
         /**获取第三方平台自定义的数据字段 */
         getExtConfig(param: ExtConfigParam);
@@ -391,6 +397,37 @@ declare namespace WeApp {
          * @param param 使用${API}.${method}.${param}.${options}或者${component}.${attribute}.${option}方式来调用
          */
         canIUse(param: string);
+
+        /**开始搜索附近的iBeacon设备 */
+        startBeaconDiscovery(param: CallbackWithErrMsgParam);
+        /**停止搜索附近的iBeacon设备 */
+        stopBeaconDiscovery(param: CallbackWithErrMsgParam);
+        /**获取所有已搜索到的iBeacon设备 */
+        getBeacons(param: BeaconsParam);
+        /**监听 iBeacon 设备的更新事件 */
+        onBeaconUpdate(callback: (res: { beacons: Array<IBeacon> }) => void);
+        /**监听 iBeacon 服务的状态变化 */
+        onBeaconServiceChange(callback: (res: { /**服务目前是否可用 */available: boolean; /**目前是否处于搜索状态 */discovering: boolean }) => void);
+
+        /**获取屏幕亮度 */
+        getScreenBrightness(param: GetScreenBrightnessParam);
+        /**设置屏幕亮度 */
+        setScreenBrightness(param: SetScreenBrightnessParam);
+
+        /**保存联系人到系统通讯录 */
+        addPhoneContact(param: AddPhoneContactParam);
+        /**使手机发生较长时间的振动 400ms */
+        vibrateLong(param: CallbackParam);
+        /**使手机发生较短时间的振动 15ms */
+        vibrateShort(param: CallbackParam);
+        /**获取用户过去三十天微信运动步数 需要先调用 wx.login 接口 */
+        getWeRunData(param: GetWeRunDataParam);
+        /**保存图片到系统相册 需要用户授权 scope.writePhotosAlbum */
+        saveImageToPhotosAlbum(param: SaveImageToPhotosAlbumParam);
+        /**保存视频到系统相册 */
+        saveVideoToPhotosAlbum(param: SaveImageToPhotosAlbumParam);
+        /**获取全局唯一的背景音频管理器 */
+        getBackgroundAudioManager(): BackgroundAudioManager;
     }
 
     interface CallbackParam {
@@ -658,6 +695,12 @@ declare namespace WeApp {
         speed: number;
         /**位置的精确度 */
         accuracy: number;
+        /**高度 单位 m */
+        altitude: number;
+        /**垂直精度 单位 m Android 无法获取 返回 0  */
+        verticalAccuracy: number;
+        /**水平精度 单位 m */
+        horizontalAccuracy: number;
     }
 
     interface OpenLocationParam extends CallbackParam {
@@ -1112,6 +1155,23 @@ declare namespace WeApp {
         setTextAlign(align: 'left' | 'center' | 'right');
     }
 
+    interface CanvasToTempFilePathParam extends CallbackParam {
+        /**画布标识 传入 <canvas/> 的 cavas-id */
+        canvasId: string;
+        /**画布x轴起点 默认0 */
+        x?: number;
+        /**画布y轴起点 默认0 */
+        y?: number;
+        /**画布宽度 默认为canvas宽度 - x  */
+        width?: number;
+        /**画布高度 默认为canvas高度 - y  */
+        height?: number;
+        /**输出图片宽度 默认为width */
+        destWidth?: number;
+        /**输出图片高度 默认为height */
+        destHeight?: number;
+    }
+
     interface CanvasGradient {
         /**
          * 指定颜色渐变点的位置和颜色
@@ -1244,6 +1304,8 @@ declare namespace WeApp {
     }
 
     interface ScanCodeParam extends CallbackParam {
+        /**是否只能从相机扫码 不允许从相册选择图片 */
+        onlyFromCamera?: boolean;
         success?: (res?: ScanCodeResult) => void;
     }
 
@@ -1396,7 +1458,22 @@ declare namespace WeApp {
     }
 
     interface SettingParam extends CallbackParam {
-        success: (res: { 'scope.userInfo': boolean; 'scope.userLocation': boolean; 'scope.address': boolean; 'scope.record': boolean; }) => void;
+        success: (res: {
+            /**用户信息 */
+            'scope.userInfo': boolean;
+            /**地理位置 */
+            'scope.userLocation': boolean;
+            /**通讯地址 */
+            'scope.address': boolean;
+            /**录音功能 */
+            'scope.record': boolean;
+            /**保存到相册 */
+            'scope.writePhotosAlbum': boolean;
+        }) => void;
+    }
+
+    interface AuthorizeParam extends CallbackWithErrMsgParam {
+        scope: string;
     }
 
     interface ReLaunchParam extends CallbackParam {
@@ -1458,5 +1535,163 @@ declare namespace WeApp {
     interface ShareMenuParam extends CallbackParam {
         /**是否使用带 shareTicket 的分享 */
         withShareTicket?: boolean;
+    }
+
+    interface BeaconsParam extends CallbackParam {
+        success: (res: { errMsg: string; beacons: Array<IBeacon> }) => void;
+    }
+
+    interface IBeacon {
+        /**	iBeacon 设备广播的 uuid */
+        uuid: string;
+        /**	iBeacon 设备的主 id */
+        major: string;
+        /**iBeacon 设备的次 id */
+        minor: string;
+        /**	表示设备距离的枚举值 */
+        proximity: number;
+        /**	iBeacon 设备的距离 */
+        accuracy: number;
+        /**表示设备的信号强度 */
+        rssi: number;
+    }
+
+    interface GetScreenBrightnessParam extends CallbackParam {
+        success: (res?: { errMsg: string; value: number; }) => void;
+    }
+
+    interface SetScreenBrightnessParam extends CallbackParam {
+        /**屏幕亮度值 范围 0~1 0 最暗 1 最亮 */
+        value: number;
+    }
+
+    interface AddPhoneContactParam extends CallbackWithErrMsgParam {
+        /**头像本地文件路径 */
+        photoFilePath?: string;
+        /**昵称 */
+        nickName?: string;
+        /**姓氏 */
+        lastName?: string;
+        /**中间名 */
+        middleName?: string;
+        /**名字 */
+        firstName: string;
+        /**	备注 */
+        remark?: string;
+        /**手机号 */
+        mobilePhoneNumber?: string;
+        /**微信号 */
+        weChatNumber?: string;
+        /**联系地址国家 */
+        addressCountry?: string;
+        /**联系地址省份 */
+        addressState?: string;
+        /**联系地址城市 */
+        addressCity?: string;
+        /**联系地址街道 */
+        addressStreet?: string;
+        /**联系地址邮政编码 */
+        addressPostalCode?: string;
+        /**公司 */
+        organization?: string;
+        /**职位 */
+        title?: string;
+        /**工作传真 */
+        workFaxNumber?: string;
+        /**工作电话 */
+        workPhoneNumber?: string;
+        /**公司电话 */
+        hostNumber: string;
+        /**电子邮件 */
+        email?: string;
+        /**网站 */
+        url?: string;
+        /**工作地址国家 */
+        workAddressCountry?: string;
+        /**工作地址省份 */
+        workAddressState?: string;
+        /**工作地址城市 */
+        workAddressCity?: string;
+        /**工作地址街道 */
+        workAddressStreet?: string;
+        /**工作地址邮政编码 */
+        workAddressPostalCode?: string;
+        /**住宅传真 */
+        homeFaxNumber?: string;
+        /**住宅电话 */
+        homePhoneNumber?: string;
+        /**住宅地址国家 */
+        homeAddressCountry?: string;
+        /**住宅地址省份 */
+        homeAddressState?: string;
+        /**住宅地址城市 */
+        homeAddressCity?: string;
+        /**住宅地址街道 */
+        homeAddressStreet?: string;
+        /**住宅地址邮政编码 */
+        homeAddressPostalCode?: string;
+    }
+
+    interface GetWeRunDataParam extends CallbackParam {
+        success?: (res: { errMsg: string; encryptedData: string }) => void;
+    }
+
+    interface SaveImageToPhotosAlbumParam extends CallbackWithErrMsgParam {
+        /**图片文件路径 可以是临时文件路径也可以是永久文件路径 */
+        filePath: string;
+    }
+
+    interface BackgroundAudioManager {
+        /**	当前音频的长度 单位 s 只有在当前有合法的 src 时返回 */
+        readonly duration: number;
+        /**	当前音频的播放位置 单位 s 只有在当前有合法的 src 时返回 */
+        readonly currentTime: number;
+        /**	当前是是否暂停或停止状态 true 表示暂停或停止 false 表示正在播放 */
+        readonly paused: boolean;
+        /**音频的数据源 默认为空字符串 当设置了新的 src 时 会自动开始播放 */
+        src: string;
+        /** 音频开始播放的位置 单位 s */
+        startTime: number;
+        /**音频缓冲的时间点仅保证当前播放时间点到此时间点内容已缓冲 */
+        readonly buffered: number;
+        /** 音频标题 用于做原生音频播放器音频标题 原生音频播放器中的分享功能 分享出去的卡片标题 也将使用该值 */
+        title: string;
+        /**专辑名 原生音频播放器中的分享功能 分享出去的卡片简介 也将使用该值 */
+        epname: string;
+        /**歌手名 原生音频播放器中的分享功能 分享出去的卡片简介 也将使用该值 */
+        singer: string;
+        /**封面图url 用于做原生音频播放器背景图 原生音频播放器中的分享功能 分享出去的卡片配图及背景也将使用该图 */
+        coverImgUrl: string;
+        /** 页面链接 原生音频播放器中的分享功能 分享出去的卡片简介 也将使用该值 */
+        webUrl: string;
+
+        /**播放 */
+        play(): void;
+        /**暂停 */
+        pause(): void;
+        /**停止 */
+        stop(): void;
+        /**跳转到指定位置 单位 s */
+        seek(position: number): void;
+        /**背景音频进入可以播放状态 但不保证后面可以流畅播放 */
+        onCanplay(callback: Function): void;
+        /**背景音频播放事件 */
+        onPlay(callback: Function): void;
+        /**背景音频暂停事件 */
+        onPause(callback: Function): void;
+        /**背景音频停止事件 */
+        onStop(callback: Function): void;
+        /**背景音频自然播放结束事件 */
+        onEnded(callback: Function): void;
+        /**背景音频播放进度更新事件 */
+        onTimeUpdate(callback: Function): void;
+        /**用户在系统音乐播放面板点击上一曲事件 iOS only  */
+        onPrev(callback: Function): void;
+        /**用户在系统音乐播放面板点击下一曲事件 iOS only  */
+        onNext(callback: Function): void;
+        /**背景音频播放错误事件 */
+        onError(callback: Function): void;
+        /**音频加载中事件 当音频因为数据不足 需要停下来加载时会触发 */
+        onWaiting(callback: Function): void;
     }
 }

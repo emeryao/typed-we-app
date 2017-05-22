@@ -16,3 +16,7 @@ wx.getBLEDeviceServices({
         console.log(res.services[0].uuid);
     },
 });
+
+let mgr = wx.getBackgroundAudioManager();
+mgr.play();
+mgr.seek(3);

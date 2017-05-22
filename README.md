@@ -1,7 +1,16 @@
 # typed-we-app
-[TypeScript](http://www.typescriptlang.org) declaration file for WeApp API
+[TypeScript](http://www.typescriptlang.org) declaration file for WeApp API  
+
+[![NPM](https://nodei.co/npm/typed-we-app.png?downloads=true&stars=true)](https://nodei.co/npm/typed-we-app/)
 
 ## Install
+
+* With [`npm`](https://www.npmjs.com/) installed  
+
+    ```batch
+    npm install typed-we-app --save-dev
+    ```
+
 * With [`typings`](https://github.com/typings/typings) installed  
 
     ```batch
@@ -12,7 +21,8 @@
 
 ## About
 Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/)   
-Version `0.17.170900`
+Wechat Web DevTool Version `0.17.171900`  
+WAService.js Version `1.2.1`
 
 ## Sample
 * TypeScript
@@ -42,4 +52,4 @@ wx.getBLEDeviceServices({
 ```
 
 ## Last Update
-`2017.05.10`
+`2017.05.22`

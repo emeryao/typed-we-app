@@ -1,12 +1,22 @@
 {
-  "name": "typed-we-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
+    "name": "typed-we-app",
+    "version": "1.2.1",
+    "description": "typescript declaration for WeApp",
+    "main": "we-app.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "weapp",
+        "wechat",
+        "wexin",
+        "typed",
+        "typescript"
+    ],
+    "author": "Emeryao",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Emeryao/typed-we-app"
+    },
+    "license": "MIT"
 }
