@@ -21,8 +21,8 @@
 
 ## About
 Based on the official WeApp API [documentation](https://mp.weixin.qq.com/debug/wxadoc/dev/api/)   
-Wechat Web DevTool Version `0.17.171900`  
-WAService.js Version `1.2.1`
+Wechat Web DevTool Version `0.18.182200`  
+WAService.js Version `1.3.0`
 
 ## Sample
 * TypeScript
@@ -52,4 +52,4 @@ wx.getBLEDeviceServices({
 ```
 
 ## Last Update
-`2017.05.22`
+`2017.06.27`
