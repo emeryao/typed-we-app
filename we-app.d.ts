@@ -65,6 +65,8 @@ declare namespace WeApp {
          * * 此事件需要 return 一个 Object，用于自定以分享内容
          */
         onShareAppMessage?: () => PageShareData;
+        /**页面滚动触发事件的处理函数 */
+        onPageScroll?: Function;
 
         /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
         [others: string]: any;
