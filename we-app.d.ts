@@ -86,18 +86,18 @@ declare namespace WeApp {
          * 发起的是https请求
          * 一个微信小程序同时只能有5个网络请求连接
          */
-        request(param: RequestParam);
+        request(param: RequestParam): RequestTask;
         /**
          * 上传文件 
          * 将本地资源上传到开发者服务器
          * 如 页面通过 wx.chooseImage 等接口获取到一个本地资源的临时文件路径后 可通过此接口将本地资源上传到指定服务器 客户端发起一个 HTTPS POST 请求 其中 Content-Type 为 multipart/form-data 
          */
-        uploadFile(param: UploadParam);
+        uploadFile(param: UploadParam): UploadTask;
         /**
          * 下载文件
          * 下载文件资源到本地 客户端直接发起一个 HTTP GET 请求 把下载到的资源根据 type 进行处理 并返回文件的本地临时路径 
          */
-        downloadFile(param: DownloadParam);
+        downloadFile(param: DownloadParam): DownloadTask;
         /**
          * 创建 WebSocket 连接
          * 一个微信小程序同时只能有一个 WebSocket 连接 如果当前已存在一个 WebSocket 连接 会自动关闭该连接 并重新创建一个 WebSocket 连接
@@ -115,7 +115,7 @@ declare namespace WeApp {
         /**接受 WebSocket 消息 */
         onSocketMessage(callback: (res?: { data: string | ArrayBuffer }) => void);
         /**关闭 WebSocket 连接 */
-        closeSocket();
+        closeSocket(param: CloseSocketParam);
         /**监听 WebSocket 关闭 */
         onSocketClose(callback: (res?: any) => void);
 
@@ -396,7 +396,7 @@ declare namespace WeApp {
          * 判断小程序的API 回调 参数 组件等是否在当前版本可用
          * @param param 使用${API}.${method}.${param}.${options}或者${component}.${attribute}.${option}方式来调用
          */
-        canIUse(param: string);
+        canIUse(param: string): never;
 
         /**开始搜索附近的iBeacon设备 */
         startBeaconDiscovery(param: CallbackWithErrMsgParam);
@@ -432,6 +432,23 @@ declare namespace WeApp {
         navigateToMiniProgram(param: NavigateToMiniProgramParam);
         /**返回到上一个小程序 只有在当前小程序是被其他小程序打开时可以调用成功 */
         navigateBackMiniProgram(param: NavigateBackMiniProgramParam);
+        /**
+         * 返回一个SelectorQuery对象实例
+         * 可以在这个实例上使用select等方法选择节点 并使用boundingClientRect等方法选择需要查询的信息
+         */
+        createSelectorQuery(): SelectorQuery;
+        /**获取文件信息 */
+        getFileInfo(param: GetFileInfoParam): never;
+        /**监听用户主动截屏事件 用户使用系统截屏按键截屏时触发此事件 */
+        onUserCaptureScreen(callback?: Function): never;
+        /**将页面滚动到目标位置 单位px */
+        pageScrollTo(scrollTop: number): never;
+        /**支持小程序修改标题栏颜色 */
+        setNavigationBarColor(param: SetNavigationBarColorParam): never;
+        /**设置是否打开调试开关 此开关对正式版也能生效 */
+        setEnableDebug(param: SetEnableDebugParam): never;
+        /**设置是否保持常亮状态 仅在当前小程序生效 离开小程序后设置失效 */
+        setKeepScreenOn(param: SetKeepScreenOnParam): never;
     }
 
     interface CallbackParam {
@@ -460,6 +477,10 @@ declare namespace WeApp {
         success?: (res?: HttpResponse) => void;
     }
 
+    interface RequestTask {
+        abort(): never;
+    }
+
     interface HttpResponse {
         data?: any;
         errMsg: string;
@@ -479,6 +500,11 @@ declare namespace WeApp {
         formData?: Object;
     }
 
+    interface UploadTask {
+        onProgressUpdate: (res: { progress: number; totalBytesSent: number; totalBytesExpectedToSend: number; }) => never;
+        abort(): never;
+    }
+
     interface DownloadParam extends CallbackParam {
         /**下载资源的 url */
         url: string;
@@ -493,6 +519,11 @@ declare namespace WeApp {
         success?: (res?: { tempFilePath: string }) => void
     }
 
+    interface DownloadTask {
+        onProgressUpdate: (res: { progress: number; totalBytesWritten: number; totalBytesExpectedToWrite: number; }) => never;
+        abort(): never;
+    }
+
     interface ConnectSocketParam extends CallbackParam {
         /**开发者服务器接口地址 必须是 HTTPS 协议 且域名必须是后台配置的合法域名 */
         url: string;
@@ -502,11 +533,20 @@ declare namespace WeApp {
         header?: Object;
         /**默认是GET 有效值为: OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT */
         method?: string;
+        /**子协议数组 */
+        protocols?: Array<string>;
     }
 
     interface SocketMessage extends CallbackParam {
         /**需要发送的内容 */
         data: string | ArrayBuffer;
+    }
+
+    interface CloseSocketParam extends CallbackParam {
+        /**一个数字值表示关闭连接的状态号 表示连接被关闭的原因 如果这个参数没有被指定 默认的取值是1000 */
+        code?: number;
+        /**一个可读的字符串 表示连接被关闭的原因 这个字符串必须是不长于123字节的UTF-8 文本 */
+        reason?: string;
     }
 
     interface ChooseImageParam extends CallbackParam {
@@ -604,6 +644,8 @@ declare namespace WeApp {
     interface OpenDocumentParam extends CallbackParam {
         /**文件路径 可通过 downFile 获得 */
         filePath: string;
+        /**文件类型 指定文件类型打开文件 */
+        fileType?: 'doc' | 'xls' | 'ppt' | 'pdf' | 'docx' | 'xlsx' | 'pptx';
     }
 
     interface ChooseVideoParam extends CallbackParam {
@@ -630,13 +672,19 @@ declare namespace WeApp {
 
     interface VideoContext {
         /**播放 */
-        play();
+        play(): never;
         /**暂停 */
-        pause();
+        pause(): never;
         /**跳转到指定位置 单位 s */
-        seek(position: number);
+        seek(position: number): never;
         /**发送弹幕 danmu 包含两个属性 text,color */
-        sendDanmu(danmu: { text: string, color: string });
+        sendDanmu(danmu: { text: string, color: string }): never;
+        /**设置倍速播放 支持的倍率有 0.5/0.8/1.0/1.25/1.5 */
+        playbackRate(rate: number): never;
+        /**进入全屏 */
+        requestFullScreen(): never;
+        /**退出全屏 */
+        exitFullScreen(): never;
     }
 
     interface VideoInfo {
@@ -688,6 +736,21 @@ declare namespace WeApp {
         type?: string;
         /**接口调用成功的回调函数 */
         success: (res?: LocationInfo) => void;
+    }
+
+    interface TranslateMarkerParam extends CallbackParam {
+        /**指定marker */
+        markerId: number;
+        /**指定marker移动到的目标点 */
+        destination: any;
+        /**移动过程中是否自动旋转marker */
+        autoRotate: boolean;
+        /**marker的旋转角度 */
+        rotate: number
+        /**动画持续时长 默认值1000ms 平移与旋转分别计算 */
+        duration?: number;
+        /**动画结束回调函数 */
+        animationEnd?: Function;
     }
 
     interface LocationInfo {
@@ -1157,6 +1220,7 @@ declare namespace WeApp {
         createCircularGradient(x: number, y: number, r: number): CanvasGradient;
         /**用于设置文字的对齐 */
         setTextAlign(align: 'left' | 'center' | 'right');
+        setTextBaseline(textBaseline: 'top' | 'bottom' | 'middle' | 'normal');
     }
 
     interface CanvasToTempFilePathParam extends CallbackParam {
@@ -1220,6 +1284,8 @@ declare namespace WeApp {
          * 返回的数据不包含 encryptedData iv 等敏感信息
          */
         withCredentials?: boolean;
+        /**指定返回用户信息的语言 zh_CN 简体中文 zh_TW 繁体中文 en 英文 */
+        lang?: string;
         success?: (res?: UserInfo) => void;
     }
 
@@ -1330,6 +1396,14 @@ declare namespace WeApp {
         getCenterLocation(param: GetLocationParam);
         /**将地图中心移动到当前定位点 需要配合map组件的show-location使用 */
         moveToLocation();
+        /**平移marker 带动画 */
+        translateMarker(param: TranslateMarkerParam);
+        /**缩放视野展示所有经纬度 */
+        includePoints(param: { points: Array<{ latitude: number, longitude: number; }>; padding?: Array<any> });
+        /**获取当前地图的视野范围 */
+        getRegion(param: CallbackParam);
+        /**获取当前地图的缩放级别 */
+        getScale(param: CallbackParam);
     }
 
     /**自定以分享内容 */
@@ -1713,5 +1787,69 @@ declare namespace WeApp {
     interface NavigateBackMiniProgramParam extends CallbackWithErrMsgParam {
         /**需要返回给上一个小程序的数据 上一个小程序可在 App.onShow() 中获取到这份数据 */
         extraData: object;
+    }
+
+    interface SelectorQuery {
+        /**在当前页面下选择第一个匹配选择器selector的节点 返回一个NodesRef对象实例 */
+        select(selector: string): NodesRef;
+        /**在当前页面下选择匹配选择器selector的节点 返回一个NodesRef对象实例 */
+        selectAll(selector: string): NodesRef;
+        /**选择显示区域 可用于获取显示区域的尺寸 滚动位置等信息 */
+        selectViewport(): NodesRef;
+        exec(callback?: (res: Array<any>) => void);
+    }
+
+    interface NodesRef {
+        /**添加节点的布局位置的查询请求 相对于显示区域 以像素为单位 */
+        boundingClientRect(callback: (rect: WxClientRect | Array<WxClientRect>) => void): SelectorQuery;
+        /**添加节点的滚动位置查询请求 以像素为单位 */
+        scrollOffset(callback: (rects: WxScrollOffset) => void): SelectorQuery;
+        /**获取节点的相关信息 需要获取的字段在fields中指定 */
+        fields(fields: NodeField, callback: (res: any) => void): SelectorQuery;
+    }
+
+    interface WxClientRect extends ClientRect {
+        id: string;
+        dataset: any;
+    }
+
+    interface WxScrollOffset {
+        id: string;
+        dataset: any;
+        scrollLeft: number;
+        scrollTop: number;
+    }
+
+    interface NodeField {
+        id?: boolean;
+        dataset?: boolean;
+        rect?: boolean;
+        size?: boolean;
+        scrollOffset?: boolean;
+    }
+
+    interface GetFileInfoParam extends CallbackParam {
+        /**本地文件路径 */
+        filePath: string;
+        /**计算文件摘要的算法 默认值 md5 */
+        digestAlgorithm?: 'md5' | 'sha1';
+        success: (res: { size: number; digest: string; errMsg: string }) => void;
+    }
+
+    interface SetNavigationBarColorParam extends CallbackWithErrMsgParam {
+        frontColor: string;
+        backgroundColor: string;
+        animation?: {
+            duration?: number;
+            timingFunc?: 'linear' | 'easeIn' | 'easeOut' | 'easeInOut';
+        }
+    }
+
+    interface SetEnableDebugParam extends CallbackWithErrMsgParam {
+        enableDebug: boolean;
+    }
+
+    interface SetKeepScreenOnParam extends CallbackWithErrMsgParam {
+        keepScreenOn: boolean;
     }
 }
