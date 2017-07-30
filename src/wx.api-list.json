@@ -1,6 +1,6 @@
 {
-    "devToolVersion": "0.17.171900",
-    "WAService.js": "1.2.1",
+    "devToolVersion": "0.20.191900",
+    "WAService.js": "1.4.3",
     "FilePath": "..\\微信web开发者工具\\package.nw\\app\\dist\\weapp\\onlinevendor\\1.4.0\\WAService.js",
     "apiList": [
         "addCard",
@@ -125,6 +125,7 @@
         "setClipboardData",
         "setEnableDebug",
         "setKeepScreenOn",
+        "setTopBarText",
         "setNavigationBarColor",
         "setNavigationBarTitle",
         "setScreenBrightness",

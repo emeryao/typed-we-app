@@ -254,6 +254,8 @@ declare namespace WeApp {
         showActionSheet(param: ActionSheetParam);
 
         // 界面 API 列表
+        /**设置置顶信息 */
+        setTopBarText(param: TopBarTextParam);
         /**设置当前页面标题 */
         setNavigationBarTitle(param: NavigationBarTitleParam);
         /**在当前页面显示导航条加载动画 */
@@ -901,6 +903,11 @@ declare namespace WeApp {
         cancel: boolean;
         /**用户点击的按钮 从上到下的顺序 从0开始 */
         tapIndex: number;
+    }
+
+    interface TopBarTextParam extends CallbackParam {
+        /**置顶栏文字内容 */
+        text: string;
     }
 
     interface NavigationBarTitleParam extends CallbackParam {
