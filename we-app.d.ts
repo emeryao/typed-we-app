@@ -75,7 +75,7 @@ declare namespace WeApp {
     /**页面 */
     interface Page {
         /**用于将数据从逻辑层发送到视图层 */
-        setData: Function;
+        setData: (data: any, callback?: Function) => void;
         /**页面逻辑层数据 */
         data: any;
         [others: string]: any;
@@ -831,6 +831,8 @@ declare namespace WeApp {
     }
 
     interface SystemInfo {
+        /**手机品牌 */
+        brand: string;
         /**手机型号 */
         model: string;
         /**设备像素比 */
@@ -851,6 +853,8 @@ declare namespace WeApp {
         screenWidth: string;
         /**屏幕高度 */
         screenHeight: string;
+        /**用户字体大小设置 */
+        fontSizeSetting: string;
         /**客户端基础库版本 */
         SDKVersion: string;
     }
@@ -1478,6 +1482,8 @@ declare namespace WeApp {
     interface BluetoothDevice {
         /**	蓝牙设备名称 某些设备可能没有 */
         name: string;
+        /**低功耗设备广播名称 某些设备可能没有 */
+        localName: string;
         /**用于区分设备的 id */
         deviceId: string;
         /**当前蓝牙设备的信号强度 */
