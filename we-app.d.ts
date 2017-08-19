@@ -289,6 +289,11 @@ declare namespace WeApp {
         hideKeyboard();
         /**停止下拉刷新动画 */
         stopPullDownRefresh();
+        /**
+         * @since 1.5.0
+         * @description 开始下拉刷新 调用后触发下拉刷新动画 效果与用户手动下拉刷新一致
+         */
+        startPullDownRefresh(param: CallbackWithErrMsgParam): never;
 
         // 开放接口 
         /**登录 */
@@ -453,6 +458,21 @@ declare namespace WeApp {
         setEnableDebug(param: SetEnableDebugParam): never;
         /**设置是否保持常亮状态 仅在当前小程序生效 离开小程序后设置失效 */
         setKeepScreenOn(param: SetKeepScreenOnParam): never;
+        /**
+         * @since 1.5.0
+         * @description 获取本机支持的 SOTER 生物认证方式
+         */
+        checkIsSupportSoterAuthentication(param: CheckIsSupportSoterAuthenticationParam): never;
+        /**
+         * @since 1.5.0
+         * @description 开始 SOTER 生物认证
+         */
+        startSoterAuthentication(param: StartSoterAuthenticationParam): never;
+        /**
+         * @since 1.5.0
+         * @description 选择用户的发票抬头
+         */
+        chooseInvoiceTitle(param: ChooseInvoiceTitleParam): never;
     }
 
     interface CallbackParam {
@@ -1423,6 +1443,8 @@ declare namespace WeApp {
         desc?: string;
         /**分享路径 当前页面 path 必须是以 / 开头的完整路径 */
         path?: string;
+        /**自定义图片路径 可以是本地文件路 代码包文件路径或者网络图片路径 支持PNG及JPG 不传入 imageUrl 则使用默认截图 */
+        imageUrl?: string;
         success?: (res: { errMsg: string; shareTickets: Array<string> }) => void;
     }
 
@@ -1860,5 +1882,42 @@ declare namespace WeApp {
 
     interface SetKeepScreenOnParam extends CallbackWithErrMsgParam {
         keepScreenOn: boolean;
+    }
+
+    interface CheckIsSupportSoterAuthenticationParam extends CallbackParam {
+        success?: (res: { supportMode: Array<'fingerPrint' | 'facial' | 'speech'>, errMsg: string; }) => void;
+    }
+
+    interface StartSoterAuthenticationParam extends CallbackParam {
+        /**请求使用的可接受的生物认证方式 */
+        requestAuthModes: Array<string>;
+        /**挑战因子 挑战因子为调用者为此次生物鉴权准备的用于签名的字符串关键是别信息 将作为result_json的一部分 供调用者识别本次请求 */
+        challenge: string;
+        /**验证描述 即识别过程中显示在界面上的对话框提示内容 */
+        authContent?: string;
+        success?: (res: { errCode: number; authMode: string; resultJSON: string; resultJSONSignature: string; errMsg: string; }) => void;
+    }
+
+    interface ChooseInvoiceTitleParam extends CallbackParam {
+        success?: (res: InvoiceTitle) => void;
+    }
+
+    interface InvoiceTitle {
+        /**抬头类型 0 单位 1 个人 */
+        type: string;
+        /**抬头名称 */
+        title: string;
+        /**抬头税号 */
+        taxNumber: string;
+        /**单位地址 */
+        companyAddress: string;
+        /**手机号码 */
+        telephone: string;
+        /**银行名称 */
+        bankName: string;
+        /**银行账号 */
+        bankAccount: string;
+        /**接口调用结果 */
+        errMsg: string;
     }
 }
