@@ -179,6 +179,8 @@ declare namespace WeApp {
         createInnerAudioContext(): InnerAudioContext;
         /**创建并返回 video 上下文 videoContext 对象 */
         createVideoContext(videoId: string): VideoContext;
+        /**创建并返回 camera 上下文 cameraContext 对象 cameraContext 与页面的 camera 组件绑定 一个页面只能有一个camera 通过它可以操作对应的 <camera/> 组件 */
+        createCameraContext(): CameraContext;
 
         // 文件
         /**保存文件 */
@@ -771,11 +773,11 @@ declare namespace WeApp {
         pause(): void;
         /**停止 */
         stop(): void;
-        /**跳转到指定位置，单位 s */
+        /**跳转到指定位置 单位 s */
         seek(position: number): void;
         /**销毁当前实例 */
         destroy(): void;
-        /**音频进入可以播放状态，但不保证后面可以流畅播放 */
+        /**音频进入可以播放状态 但不保证后面可以流畅播放 */
         onCanplay: () => void;
         /**音频播放事件 */
         onPlay: () => void;
@@ -789,7 +791,7 @@ declare namespace WeApp {
         onTimeUpdate: () => void;
         /**音频播放错误事件 */
         onError: () => void;
-        /**音频加载中事件，当音频因为数据不足，需要停下来加载时会触发 */
+        /**音频加载中事件 当音频因为数据不足 需要停下来加载时会触发 */
         onWaiting: () => void;
         /**音频进行 seek 操作事件 */
         onSeeking: () => void;
@@ -825,6 +827,30 @@ declare namespace WeApp {
         height: number;
         /**返回选定视频的宽 */
         width: number;
+    }
+
+    interface CameraContext {
+        /**拍照 可指定质量 成功则返回图片 */
+        takePhoto(param: CameraContextTakePhotoParam): void;
+        /**开始录像 */
+        startRecord(param: CameraContextStartRecordParam): void;
+        /**结束录像 成功则返回封面与视频 */
+        stopRecord(param: CameraContextStopRecord): void;
+    }
+
+    interface CameraContextTakePhotoParam extends CallbackParam {
+        /**成像质量 值为high, normal, low 默认normal */
+        quality?: 'high' | 'normal' | 'low';
+        success?: (res?: { tempImagePath: string }) => void;
+    }
+
+    interface CameraContextStartRecordParam extends CallbackParam {
+        /**超过30s或页面onHide时会结束录像 */
+        timeoutCallback?: (res?: { tempThumbPath: string; tempVideoPath: string }) => void;
+    }
+
+    interface CameraContextStopRecord extends CallbackParam {
+        success?: (res?: { tempThumbPath: string; tempVideoPath: string }) => void;
     }
 
     interface SetStorageParam extends CallbackParam {
