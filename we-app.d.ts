@@ -60,9 +60,9 @@ declare namespace WeApp {
         onReachBottom?: Function;
         /**
          * 设置该页面的分享信息
-         * * 只有定义了此事件处理函数，右上角菜单才会显示“分享”按钮
+         * * 只有定义了此事件处理函数 右上角菜单才会显示“分享”按钮
          * * 用户点击分享按钮的时候会调用
-         * * 此事件需要 return 一个 Object，用于自定以分享内容
+         * * 此事件需要 return 一个 Object 用于自定以分享内容
          */
         onShareAppMessage?: () => PageShareData;
         /**页面滚动触发事件的处理函数 */
@@ -138,6 +138,8 @@ declare namespace WeApp {
          * 主动调用停止录音 
          */
         stopRecord();
+        /**获取全局唯一的录音管理器 */
+        getRecorderManager(): RecorderManager;
         /**
          * 播放语音
          * 开始播放语音 同时只允许一个语音文件正在播放 如果前一个语音文件还没播放完 将中断前一个语音播放 
@@ -170,6 +172,11 @@ declare namespace WeApp {
         chooseVideo(param: ChooseVideoParam);
         /**创建并返回 audio 上下文 audioContext 对象 */
         createAudioContext(audioId: string): AudioContext;
+        /**
+         * @since 1.6.0
+         * @description 创建并返回内部 audio 上下文 innerAudioContext 对象 本接口是 wx.createAudioContext 升级版
+         */
+        createInnerAudioContext(): InnerAudioContext;
         /**创建并返回 video 上下文 videoContext 对象 */
         createVideoContext(videoId: string): VideoContext;
 
@@ -468,6 +475,8 @@ declare namespace WeApp {
          * @description 开始 SOTER 生物认证
          */
         startSoterAuthentication(param: StartSoterAuthenticationParam): never;
+        /**获取设备内是否录入如指纹等生物信息的接口 */
+        checkIsSoterEnrolledInDevice(param: CheckIsSoterEnrolledInDeviceParam): never;
         /**
          * @since 1.5.0
          * @description 选择用户的发票抬头
@@ -485,7 +494,7 @@ declare namespace WeApp {
     }
 
     interface CallbackWithErrMsgParam extends CallbackParam {
-        success?: (res?: {/**成功：ok，错误：详细信息 */errMsg: string }) => void;
+        success?: (res?: {/**成功：ok 错误：详细信息 */errMsg: string }) => void;
     }
 
     interface RequestParam extends CallbackParam {
@@ -596,7 +605,45 @@ declare namespace WeApp {
     }
 
     interface RecordParam extends CallbackParam {
+        duration?: number;
         success?: (res?: { tempFilePath: string }) => void;
+    }
+
+    interface RecorderManager {
+        /**开始录音 */
+        start(options: RecorderManagerStartOption): void;
+        /**暂停录音 */
+        pause(): void;
+        /**继续录音 */
+        resume(): void;
+        /**停止录音 */
+        stop(): void;
+        /**录音开始事件 */
+        onStart: () => void;
+        /**录音暂停事件 */
+        onPause: () => void;
+        /**录音停止事件 会回调文件地址 */
+        onStop: (res?: { tempPath: string }) => void;
+        /**已录制完指定帧大小的文件 会回调录音分片结果数据。如果设置了 frameSize  则会回调此事件 */
+        onFrameRecorded: (res?: { frameBuffer: ArrayBuffer; isLastFrame: boolean }) => void;
+        /**录音错误事件 会回调错误信息 */
+        onError: (res?: { errMsg: string }) => void;
+    }
+
+    interface RecorderManagerStartOption {
+        /**
+         * 指定录音的时长 单位 ms  如果传入了合法的 duration  在到达指定的 duration 后会自动停止录音 最大值 600000(10 分钟),默认值 60000(1分钟)
+         */
+        duration?: number;
+        /**采样率 */
+        sampleRate?: 8000 | 16000 | 44100;
+        /**录音通道数 */
+        numberOfChannels?: 1 | 2;
+        encodeBitRate?: 8000 | 11025 | 12000 | 16000 | 22050 | 24000 | 32000 | 44100 | 48000;
+        /**音频格式 */
+        format?: 'aac' | 'mp3';
+        /**指定帧大小 单位 KB 传入 frameSize 后 每录制指定帧大小的内容后 会回调录制的文件内容 不指定则不会回调 暂仅支持 mp3 格式  */
+        frameSize?: number;
     }
 
     interface VoiceParam extends CallbackParam {
@@ -675,6 +722,11 @@ declare namespace WeApp {
     interface ChooseVideoParam extends CallbackParam {
         /**album 从相册选视频 camera 使用相机拍摄 默认为:['album', 'camera'] */
         sourceType?: Array<string>;
+        /**
+         * @since 1.6.0
+         * @description 是否压缩所选的视频源文件 默认值为true 需要压缩
+         */
+        compressed?: boolean;
         /**拍摄视频最长拍摄时间 单位秒 最长支持60秒 */
         maxDuration?: number;
         /**前置或者后置摄像头 默认为前后都有 即:['front', 'back'] */
@@ -692,6 +744,57 @@ declare namespace WeApp {
         pause();
         /**跳转到指定位置 单位 s */
         seek(position: number);
+    }
+
+    interface InnerAudioContext {
+        /**音频的数据链接 用于直接播放 */
+        src: string;
+        /**开始播放的位置 单位:s 默认 0 */
+        startTime: number;
+        /**是否自动开始播放 默认 false */
+        autoplay: boolean;
+        /**是否循环播放 默认 false */
+        loop: boolean;
+        /**是否遵循系统静音开关 当此参数为 false 时 即使用户打开了静音开关 也能继续发出声音 默认值 true */
+        obeyMuteSwitch: boolean;
+        /**当前音频的长度 单位:s 只有在当前有合法的 src 时返回 */
+        readonly duration: number;
+        /**当前音频的播放位置 单位:s 只有在当前有合法的 src 时返回 时间不取整 保留小数点后 6 位 */
+        readonly currentTime: number;
+        /**当前是是否暂停或停止状态 true 表示暂停或停止 false 表示正在播放 */
+        readonly paused: boolean;
+        /**音频缓冲的时间点 仅保证当前播放时间点到此时间点内容已缓冲 */
+        readonly buffered: number;
+        /**播放 */
+        play(): void;
+        /**暂停 */
+        pause(): void;
+        /**停止 */
+        stop(): void;
+        /**跳转到指定位置，单位 s */
+        seek(position: number): void;
+        /**销毁当前实例 */
+        destroy(): void;
+        /**音频进入可以播放状态，但不保证后面可以流畅播放 */
+        onCanplay: () => void;
+        /**音频播放事件 */
+        onPlay: () => void;
+        /**音频暂停事件 */
+        onPause: () => void;
+        /**音频停止事件 */
+        onStop: () => void;
+        /**音频自然播放结束事件 */
+        onEnded: () => void;
+        /**音频播放进度更新事件 */
+        onTimeUpdate: () => void;
+        /**音频播放错误事件 */
+        onError: () => void;
+        /**音频加载中事件，当音频因为数据不足，需要停下来加载时会触发 */
+        onWaiting: () => void;
+        /**音频进行 seek 操作事件 */
+        onSeeking: () => void;
+        /**音频完成 seek 操作事件 */
+        onSeeked: () => void;
     }
 
     interface VideoContext {
@@ -1453,7 +1556,7 @@ declare namespace WeApp {
     }
 
     interface BluetoothAdapterStateParam extends CallbackParam {
-        success?: (res?: { adapterState: AdapterState, /**成功：ok，错误：详细信息 */errMsg: string }) => void;
+        success?: (res?: { adapterState: AdapterState, /**成功：ok 错误：详细信息 */errMsg: string }) => void;
     }
 
     /**蓝牙适配器状态信息 */
@@ -1476,7 +1579,7 @@ declare namespace WeApp {
     interface BluetoothDevicesParam extends CallbackParam {
         /**蓝牙设备主 service 的 uuid 列表 */
         services: Array<string>;
-        success: (res: { devices: Array<BluetoothDevice>, /**成功：ok，错误：详细信息 */errMsg: string }) => void;
+        success: (res: { devices: Array<BluetoothDevice>, /**成功：ok 错误：详细信息 */errMsg: string }) => void;
     }
 
     interface BluetoothDevice {
@@ -1495,17 +1598,17 @@ declare namespace WeApp {
     interface ConnectedBluetoothDevicesParam extends CallbackParam {
         /**蓝牙设备主 service 的 uuid 列表 */
         services: Array<string>;
-        success: (res: { devices: Array<{ /**蓝牙设备名称 某些设备可能没有 */name: string, /**用于区分设备的 id */deviceId: string }>, /**成功：ok，错误：详细信息 */errMsg: string }) => void;
+        success: (res: { devices: Array<{ /**蓝牙设备名称 某些设备可能没有 */name: string, /**用于区分设备的 id */deviceId: string }>, /**成功：ok 错误：详细信息 */errMsg: string }) => void;
     }
 
     interface BLEConnectionParam extends CallbackWithErrMsgParam {
-        /**蓝牙设备 id，参考 getDevices 接口 */
+        /**蓝牙设备 id 参考 getDevices 接口 */
         deviceId: string;
     }
 
     interface BLEDeviceServicesParam extends CallbackParam {
         deviceId: string;
-        success: (res: { services: Array<{ /**蓝牙设备服务的 uuid */uuid: string; /**该服务是否为主服务 */isPrimary: boolean }>; /**成功：ok，错误：详细信息 */errMsg: string }) => void;
+        success: (res: { services: Array<{ /**蓝牙设备服务的 uuid */uuid: string; /**该服务是否为主服务 */isPrimary: boolean }>; /**成功：ok 错误：详细信息 */errMsg: string }) => void;
     }
 
     interface BLEDeviceCharacteristicsParam extends CallbackParam {
@@ -1902,6 +2005,11 @@ declare namespace WeApp {
         /**验证描述 即识别过程中显示在界面上的对话框提示内容 */
         authContent?: string;
         success?: (res: { errCode: number; authMode: string; resultJSON: string; resultJSONSignature: string; errMsg: string; }) => void;
+    }
+
+    interface CheckIsSoterEnrolledInDeviceParam extends CallbackParam {
+        checkAuthMode: 'fingerPrint' | 'facial' | 'speech';
+        success?: (res: { isEnrolled: boolean, errMsg: string; }) => void;
     }
 
     interface ChooseInvoiceTitleParam extends CallbackParam {
