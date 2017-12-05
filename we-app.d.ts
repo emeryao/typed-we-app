@@ -1459,7 +1459,9 @@ declare namespace WeApp {
         /**使用sha1(rawData + sessionkey) 得到字符串 用于校验用户信息 */
         signature: string;
         /**包括敏感数据在内的完整用户信息的加密数据 */
-        encryptData: string;
+        encryptedData: string;
+        /**加密算法的初始向量 */
+        iv: string;
     }
 
     interface RequestPaymentParam extends CallbackParam {
