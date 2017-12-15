@@ -1451,9 +1451,26 @@ declare namespace WeApp {
         success?: (res?: UserInfo) => void;
     }
 
+    interface WxUserInfo {
+        /**用户昵称 */
+        nickName: string;
+        /**用户头像 最后一个数值代表正方形头像大小(有0 46 64 96 132数值可选 0代表640*640正方形头像) 用户没有头像时该项为空 若用户更换头像 原有头像URL将失效 */
+        avatarUrl: string;
+        /**用户的性别 值为1时是男性 值为2时是女性 值为0时是未知 */
+        gender: string;
+        /**用户所在城市 */
+        city: string;
+        /**用户所在省份 */
+        province: string;
+        /**用户所在国家 */
+        country: string;
+        /**用户的语言 简体中文为zh_CN */
+        language: string;
+    }
+
     interface UserInfo {
-        /**	用户信息对象 不包含 openid 等敏感信息 */
-        userInfo: Object;
+        /**用户信息对象 不包含 openid 等敏感信息 */
+        userInfo: WxUserInfo;
         /**不包括敏感信息的原始数据字符串 用于计算签名 */
         rawData: string;
         /**使用sha1(rawData + sessionkey) 得到字符串 用于校验用户信息 */
