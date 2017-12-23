@@ -520,6 +520,7 @@ declare namespace WeApp {
         data?: any;
         errMsg: string;
         statusCode: number;
+        header?: Object;
     }
 
     interface UploadParam extends CallbackParam {
