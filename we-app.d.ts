@@ -520,6 +520,7 @@ declare namespace WeApp {
         data?: any;
         errMsg: string;
         statusCode: number;
+        /**@since 1.2.0 */
         header?: Object;
     }
 
