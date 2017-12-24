@@ -1,6 +1,6 @@
 {
     "name": "typed-we-app",
-    "version": "1.6.0-update.5",
+    "version": "1.7.0",
     "description": "typescript declaration for WeApp",
     "main": "we-app.d.ts",
     "scripts": {

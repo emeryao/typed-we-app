@@ -1,6 +1,5 @@
 {
     "rules": {
-        // TypeScript Specific
         "adjacent-overload-signatures": true,
         "member-access": [
             true,
@@ -34,7 +33,6 @@
             "property-declaration",
             "member-variable-declaration"
         ],
-        // Functionality
         "curly": true,
         "forin": true,
         "label-position": true,
@@ -45,7 +43,6 @@
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
-        // "no-for-in-array": true,
         "no-invalid-this": [
             false,
             "check-function-in-method"
@@ -60,11 +57,9 @@
         "no-use-before-declare": true,
         "no-var-keyword": true,
         "radix": true,
-        // "restrict-plus-operands": true,
         "switch-default": true,
         "triple-equals": false,
         "use-isnan": true,
-        // Maintainability
         "cyclomatic-complexity": [
             true,
             30
@@ -89,7 +84,6 @@
                 "singleline": "never"
             }
         ],
-        // Style
         "array-type": [
             true,
             "generic"

@@ -102,7 +102,7 @@ declare namespace WeApp {
         downloadFile(param: DownloadParam): DownloadTask;
         /**
          * 创建 WebSocket 连接
-         * 一个微信小程序同时只能有一个 WebSocket 连接 如果当前已存在一个 WebSocket 连接 会自动关闭该连接 并重新创建一个 WebSocket 连接
+         * 基础库 1.7.0 之前 一个微信小程序同时只能有一个 WebSocket 连接 如果当前已存在一个 WebSocket 连接 会自动关闭该连接 并重新创建一个 WebSocket 连接 基础库版本 1.7.0 及以后 支持存在多个 WebSokcet 连接 每次成功调用 wx.connectSocket 会返回一个新的 SocketTask
          */
         connectSocket(param: ConnectSocketParam);
         /**监听 WebSocket 打开 */
@@ -507,7 +507,14 @@ declare namespace WeApp {
         /**设置请求的 header,header 中不能设置 Referer */
         header?: Object
         /**默认为 GET 有效值:OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT */
-        method?: string;
+        method?: 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'CONNECT';
+        /**如果设为json 会尝试对返回的数据做一次 JSON.parse */
+        dataType?: string;
+        /**
+         * @description 设置响应的数据类型
+         * @since 1.7.0
+         */
+        responseType?: 'text' | 'arraybuffer';
         /**收到开发者服务成功返回的回调函数 res = { data: '开发者服务器返回的内容' } */
         success?: (res?: HttpResponse) => void;
     }
@@ -517,7 +524,7 @@ declare namespace WeApp {
     }
 
     interface HttpResponse {
-        data?: any;
+        data?: Object | string | ArrayBuffer;
         errMsg: string;
         statusCode: number;
         /**@since 1.2.0 */
@@ -1384,7 +1391,13 @@ declare namespace WeApp {
         createCircularGradient(x: number, y: number, r: number): CanvasGradient;
         /**用于设置文字的对齐 */
         setTextAlign(align: 'left' | 'center' | 'right');
+        /**用于设置文字的水平对齐 */
         setTextBaseline(textBaseline: 'top' | 'bottom' | 'middle' | 'normal');
+        /**
+         * @description 将之前在绘图上下文中的描述(路径 变形 样式) 画到 canvas 中
+         * @since 1.7.0
+         */
+        draw(reserve?: boolean, callback?: Function): void;
     }
 
     interface CanvasToTempFilePathParam extends CallbackParam {
@@ -1402,6 +1415,16 @@ declare namespace WeApp {
         destWidth?: number;
         /**输出图片高度 默认为height */
         destHeight?: number;
+        /**
+         * @description 目标文件的类型 默认为 'png'
+         * @since 1.7.0
+         */
+        fileType?: 'jpg' | 'png';
+        /**
+         * @description 图片的质量 取值范围为 (0,1] 不在范围内时当作1.0处理
+         * @since 1.7.0
+         */
+        quality?: number;
     }
 
     interface CanvasGradient {
