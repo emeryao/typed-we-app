@@ -1,14 +1,14 @@
 /**注册一个小程序 */
-declare function App(param: WeApp.AppParam);
+declare function App(param: WeApp.AppParam): void;
 
 /**注册一个页面 */
-declare function Page(param: WeApp.PageParam);
+declare function Page(param: WeApp.PageParam): void;
 
 /**全局函数 可以获取到小程序实例 */
-declare function getApp();
+declare function getApp(): WeApp.AppParam;
 
 /**获取当前页面栈的实例 以数组形式按栈的顺序给出 第一个元素为首页 最后一个元素为当前页面 */
-declare function getCurrentPages();
+declare function getCurrentPages(): Array<WeApp.Page>;
 
 declare var wx: WeApp.wx;
 
@@ -22,7 +22,7 @@ declare namespace WeApp {
          */
         onLaunch?: (info: LaunchData) => void;
         /**
-         * 生命周期函数--监听小程序显示 
+         * 生命周期函数--监听小程序显示
          * 当小程序启动 或从后台进入前台显示 会触发 onShow
          */
         onShow?: (info: LaunchData) => void;
@@ -64,7 +64,7 @@ declare namespace WeApp {
          * * 用户点击分享按钮的时候会调用
          * * 此事件需要 return 一个 Object 用于自定以分享内容
          */
-        onShareAppMessage?: () => PageShareData;
+        onShareAppMessage?: (options?: { from: string, target: Target }) => PageShareData;
         /**页面滚动触发事件的处理函数 */
         onPageScroll?: Function;
 
@@ -76,13 +76,15 @@ declare namespace WeApp {
     interface Page {
         /**用于将数据从逻辑层发送到视图层 */
         setData: (data: any, callback?: Function) => void;
+        /**字段可以获取到当前页面的路径*/
+        route: string;
         /**页面逻辑层数据 */
         data: any;
         [others: string]: any;
     }
 
     interface wx {
-        // 网络 API 列表 
+        // 网络 API 列表
         /**
          * 发起网络请求
          * 发起的是https请求
@@ -90,86 +92,86 @@ declare namespace WeApp {
          */
         request(param: RequestParam): RequestTask;
         /**
-         * 上传文件 
+         * 上传文件
          * 将本地资源上传到开发者服务器
-         * 如 页面通过 wx.chooseImage 等接口获取到一个本地资源的临时文件路径后 可通过此接口将本地资源上传到指定服务器 客户端发起一个 HTTPS POST 请求 其中 Content-Type 为 multipart/form-data 
+         * 如 页面通过 wx.chooseImage 等接口获取到一个本地资源的临时文件路径后 可通过此接口将本地资源上传到指定服务器 客户端发起一个 HTTPS POST 请求 其中 Content-Type 为 multipart/form-data
          */
         uploadFile(param: UploadParam): UploadTask;
         /**
          * 下载文件
-         * 下载文件资源到本地 客户端直接发起一个 HTTP GET 请求 把下载到的资源根据 type 进行处理 并返回文件的本地临时路径 
+         * 下载文件资源到本地 客户端直接发起一个 HTTP GET 请求 把下载到的资源根据 type 进行处理 并返回文件的本地临时路径
          */
         downloadFile(param: DownloadParam): DownloadTask;
         /**
          * 创建 WebSocket 连接
          * 基础库 1.7.0 之前 一个微信小程序同时只能有一个 WebSocket 连接 如果当前已存在一个 WebSocket 连接 会自动关闭该连接 并重新创建一个 WebSocket 连接 基础库版本 1.7.0 及以后 支持存在多个 WebSokcet 连接 每次成功调用 wx.connectSocket 会返回一个新的 SocketTask
          */
-        connectSocket(param: ConnectSocketParam);
+        connectSocket(param: ConnectSocketParam): void;
         /**监听 WebSocket 打开 */
-        onSocketOpen(callback: (res?: any) => void);
+        onSocketOpen(callback: (res?: any) => void): void;
         /**监听 WebSocket 错误 */
-        onSocketError(callback: (res?: any) => void);
+        onSocketError(callback: (res?: any) => void): void;
         /**
          * 发送 WebSocket 消息
          * 通过 WebSocket 连接发送数据 需要先 wx.connectSocket 并在 wx.onSocketOpen 回调之后才能发送
         */
-        sendSocketMessage(message: SocketMessage);
+        sendSocketMessage(message: SocketMessage): void;
         /**接受 WebSocket 消息 */
-        onSocketMessage(callback: (res?: { data: string | ArrayBuffer }) => void);
+        onSocketMessage(callback: (res?: { data: string | ArrayBuffer }) => void): void;
         /**关闭 WebSocket 连接 */
-        closeSocket(param: CloseSocketParam);
+        closeSocket(param: CloseSocketParam): void;
         /**监听 WebSocket 关闭 */
-        onSocketClose(callback: (res?: any) => void);
+        onSocketClose(callback: (res?: any) => void): void;
 
-        // 媒体 API 列表 
+        // 媒体 API 列表
         /**从相册选择图片 或者拍照 */
-        chooseImage(param: ChooseImageParam);
+        chooseImage(param: ChooseImageParam): void;
         /**预览图片 */
-        previewImage(param: PreviewImageParam);
+        previewImage(param: PreviewImageParam): void;
         /**获取图片信息 */
-        getImageInfo(param: ImageInfoParam);
+        getImageInfo(param: ImageInfoParam): void;
         /**
          * 开始录音
-         * 当主动调用wx.stopRecord 或者录音超过1分钟时自动结束录音 返回录音文件的临时文件路径 
+         * 当主动调用wx.stopRecord 或者录音超过1分钟时自动结束录音 返回录音文件的临时文件路径
          */
-        startRecord(param: RecordParam);
+        startRecord(param: RecordParam): void;
         /**
          * 结束录音
-         * 主动调用停止录音 
+         * 主动调用停止录音
          */
-        stopRecord();
+        stopRecord(): void;
         /**获取全局唯一的录音管理器 */
         getRecorderManager(): RecorderManager;
         /**
          * 播放语音
-         * 开始播放语音 同时只允许一个语音文件正在播放 如果前一个语音文件还没播放完 将中断前一个语音播放 
+         * 开始播放语音 同时只允许一个语音文件正在播放 如果前一个语音文件还没播放完 将中断前一个语音播放
          */
-        playVoice(param: VoiceParam);
+        playVoice(param: VoiceParam): void;
         /**
          * 暂停播放语音
          * 暂停正在播放的语音 再次调用wx.playVoice播放同一个文件时 会从暂停处开始播放 如果想从头开始播放 需要先调用 wx.stopVoice
          */
-        pauseVoice();
+        pauseVoice(): void;
         /**结束播放语音 */
-        stopVoice();
+        stopVoice(): void;
         /**获取音乐播放状态 */
-        getBackgroundAudioPlayerState(param: GetBackgroundAudioPlayerStateParam);
+        getBackgroundAudioPlayerState(param: GetBackgroundAudioPlayerStateParam): void;
         /**播放音乐 */
-        playBackgroundAudio(param: PlayBackgroundAudioParam);
+        playBackgroundAudio(param: PlayBackgroundAudioParam): void;
         /**暂停播放音乐 */
-        pauseBackgroundAudio();
+        pauseBackgroundAudio(): void;
         /**控制音乐播放进度 */
-        seekBackgroundAudio(param: SeekBackgroundAudioParam);
+        seekBackgroundAudio(param: SeekBackgroundAudioParam): void;
         /**停止播放音乐 */
-        stopBackgroundAudio();
+        stopBackgroundAudio(): void;
         /**监听音乐开始播放 */
-        onBackgroundAudioPlay(callback: (res?: any) => void);
+        onBackgroundAudioPlay(callback: (res?: any) => void): void;
         /**监听音乐暂停 */
-        onBackgroundAudioPause(callback: (res?: any) => void);
+        onBackgroundAudioPause(callback: (res?: any) => void): void;
         /**监听音乐结束 */
-        onBackgroundAudioStop(callback: (res?: any) => void);
+        onBackgroundAudioStop(callback: (res?: any) => void): void;
         /**从相册选择视频 或者拍摄 */
-        chooseVideo(param: ChooseVideoParam);
+        chooseVideo(param: ChooseVideoParam): void;
         /**创建并返回 audio 上下文 audioContext 对象 */
         createAudioContext(audioId: string): AudioContext;
         /**
@@ -184,103 +186,103 @@ declare namespace WeApp {
 
         // 文件
         /**保存文件 */
-        saveFile(param: SaveFileParam);
+        saveFile(param: SaveFileParam): void;
         /**获取本地已保存的文件列表 */
-        getSavedFileList(param: FileListParam);
+        getSavedFileList(param: FileListParam): void;
         /**获取本地文件的文件信息 */
-        getSavedFileInfo(param: FileInfoParam);
+        getSavedFileInfo(param: FileInfoParam): void;
         /**删除本地存储的文件 */
-        removeSavedFile(param: RemoveFileParam);
+        removeSavedFile(param: RemoveFileParam): void;
         /**
          * 新开页面打开文档
          * 支持格式 doc/x,xls/x,ppt/x,pdf
          */
-        openDocument(param: OpenDocumentParam);
+        openDocument(param: OpenDocumentParam): void;
 
-        // 数据 API 列表 
+        // 数据 API 列表
         /**获取本地数据缓存 */
-        getStorage(param: GetStorageParam);
+        getStorage(param: GetStorageParam): void;
         /**从本地缓存中同步获取指定 key 对应的内容 */
         getStorageSync(key: string): any;
         /**
          * 设置本地数据缓存
          * 将数据存储在本地缓存中指定的 key 中会覆盖掉原来该 key 对应的内容 这是一个异步接口
          */
-        setStorage(param: SetStorageParam);
+        setStorage(param: SetStorageParam): void;
         /**将 data 存储在本地缓存中指定的 key 中 会覆盖掉原来该 key 对应的内容 这是一个同步接口 */
-        setStorageSync(key: string, data: any);
+        setStorageSync(key: string, data: any): void;
         /**从本地缓存中异步移除指定key */
-        removeStorage(param: RemoveStorageParam);
+        removeStorage(param: RemoveStorageParam): void;
         /**从本地缓存中同步移除指定key */
-        removeStorageSync(key: string);
+        removeStorageSync(key: string): void;
         /**清理本地数据缓存 */
-        clearStorage();
+        clearStorage(): void;
         /**同步清理本地数据缓存 */
-        clearStorageSync();
+        clearStorageSync(): void;
         /**异步获取当前storage的相关信息 */
-        getStorageInfo(pram: StorageInfoParam);
+        getStorageInfo(pram: StorageInfoParam): void;
         /**同步获取当前storage的相关信息 */
         getStorageInfoSync(): StorageInfo;
 
-        // 位置 API 列表 
+        // 位置 API 列表
         /**获取当前的地理位置 速度 */
-        getLocation(param: GetLocationParam);
+        getLocation(param: GetLocationParam): void;
         /**使用微信内置地图查看位置 */
-        openLocation(param: OpenLocationParam);
+        openLocation(param: OpenLocationParam): void;
         /**打开地图选择位置 */
-        chooseLocation(param: ChooseLocationParam);
+        chooseLocation(param: ChooseLocationParam): void;
         /**创建并返回 map 上下文 mapContext 对象 */
-        createMapContext(mapId: string);
+        createMapContext(mapId: string): void;
 
-        // 设备 API 列表 
+        // 设备 API 列表
         /**获取网络类型 */
-        getNetworkType(param: NetworkTypeParam);
+        getNetworkType(param: NetworkTypeParam): void;
         /**获取系统信息 */
-        getSystemInfo(param: SystemInfoParam);
+        getSystemInfo(param: SystemInfoParam): void;
         /**同步获取系统信息 */
         getSystemInfoSync(): SystemInfo;
         /**
          * 监听重力感应数据
          * 频率 5次/秒
          */
-        onAccelerometerChange(callback: (res?: AccelerometerInfo) => void);
+        onAccelerometerChange(callback: (res?: AccelerometerInfo) => void): void;
         /**
          * 监听罗盘数据
          * 频率 5次/秒
          */
-        onCompassChange(callback: (res?: CompassInfo) => void);
+        onCompassChange(callback: (res?: CompassInfo) => void): void;
         /**打电话 */
-        makePhoneCall(param: PhoneCallParam);
+        makePhoneCall(param: PhoneCallParam): void;
 
         //交互反馈
         /**显示消息提示框 */
-        showToast(param: ToastParam);
+        showToast(param: ToastParam): void;
         /**隐藏消息提示框 */
-        hideToast();
+        hideToast(): void;
         /**显示模态弹窗 */
-        showModal(param: ModalParam);
+        showModal(param: ModalParam): void;
         /**显示操作菜单 */
-        showActionSheet(param: ActionSheetParam);
+        showActionSheet(param: ActionSheetParam): void;
 
         // 界面 API 列表
         /**设置置顶信息 */
-        setTopBarText(param: TopBarTextParam);
+        setTopBarText(param: TopBarTextParam): void;
         /**设置当前页面标题 */
-        setNavigationBarTitle(param: NavigationBarTitleParam);
+        setNavigationBarTitle(param: NavigationBarTitleParam): void;
         /**在当前页面显示导航条加载动画 */
-        showNavigationBarLoading();
+        showNavigationBarLoading(): void;
         /**隐藏导航条加载动画 */
-        hideNavigationBarLoading();
+        hideNavigationBarLoading(): void;
         /**新窗口打开页面 */
-        navigateTo(param: NavigateToParam);
+        navigateTo(param: NavigateToParam): void;
         /**原窗口打开页面 */
-        redirectTo(param: NavigateToParam);
+        redirectTo(param: NavigateToParam): void;
         /**关闭当前页面 回退前一页面 */
-        navigateBack(param?: { /**返回的页面数 如果 delta 大于现有页面数 则返回到首页 默认1 */delta: number });
+        navigateBack(param?: { /**返回的页面数 如果 delta 大于现有页面数 则返回到首页 默认1 */delta: number }): void;
         /**动画 */
         createAnimation(param: AnimationParam): Animation;
         /**把当前画布的内容导出生成图片 并返回文件路径 */
-        canvasToTempFilePath(param: CanvasToTempFilePathParam);
+        canvasToTempFilePath(param: CanvasToTempFilePathParam): void;
         /**
        * @deprecated 不推荐使用
        * @description 创建绘图上下文
@@ -290,84 +292,84 @@ declare namespace WeApp {
          * @deprecated 不推荐使用
          * @description 绘图
          */
-        drawCanvas(param: DrawCanvasParam);
+        drawCanvas(param: DrawCanvasParam): void;
         /**创建 canvas 绘图上下文(指定 canvasId) */
         createCanvasContext(canvasId: string): CanvasContext;
 
         /**隐藏键盘 */
-        hideKeyboard();
+        hideKeyboard(): void;
         /**停止下拉刷新动画 */
-        stopPullDownRefresh();
+        stopPullDownRefresh(): void;
         /**
          * @since 1.5.0
          * @description 开始下拉刷新 调用后触发下拉刷新动画 效果与用户手动下拉刷新一致
          */
         startPullDownRefresh(param: CallbackWithErrMsgParam): never;
 
-        // 开放接口 
+        // 开放接口
         /**登录 */
-        login(param: LoginParam);
+        login(param: LoginParam): void;
         /**获取用户信息 */
-        getUserInfo(param: UserInfoParam);
+        getUserInfo(param: UserInfoParam): void;
         /**发起微信支付 */
-        requestPayment(param: RequestPaymentParam);
+        requestPayment(param: RequestPaymentParam): void;
         /**检查登陆态是否过期 */
-        checkSession(param: CallbackParam);
+        checkSession(param: CallbackParam): void;
         /**跳转到 tabBar 页面 并关闭其他所有非 tabBar 页面 */
-        switchTab(param: SwitchTabParam);
+        switchTab(param: SwitchTabParam): void;
         /**调起客户端扫码界面 扫码成功后返回对应的结果 */
-        scanCode(param: ScanCodeParam);
+        scanCode(param: ScanCodeParam): void;
 
         // 蓝牙相关
         /**初始化蓝牙适配器 */
-        openBluetoothAdapter(param: CallbackParam);
+        openBluetoothAdapter(param: CallbackParam): void;
         /**关闭蓝牙模块 调用该方法将断开所有已建立的链接并释放系统资源 */
-        closeBluetoothAdapter(param: CallbackParam);
+        closeBluetoothAdapter(param: CallbackParam): void;
         /**获取本机蓝牙适配器状态 */
-        getBluetoothAdapterState(param: BluetoothAdapterStateParam);
+        getBluetoothAdapterState(param: BluetoothAdapterStateParam): void;
         /**监听蓝牙适配器状态变化事件 */
-        onBluetoothAdapterStateChange(param: BluetoothAdapterStateChangeParam);
+        onBluetoothAdapterStateChange(param: BluetoothAdapterStateChangeParam): void;
         /**开始搜寻附近的蓝牙外围设备 */
-        startBluetoothDevicesDiscovery(param: BluetoothDevicesDiscoveryParam);
+        startBluetoothDevicesDiscovery(param: BluetoothDevicesDiscoveryParam): void;
         /**停止搜寻附近的蓝牙外围设备 */
-        stopBluetoothDevicesDiscovery(param: CallbackWithErrMsgParam);
+        stopBluetoothDevicesDiscovery(param: CallbackWithErrMsgParam): void;
         /**获取所有已发现的蓝牙设备 包括已经和本机处于连接状态的设备 */
-        getBluetoothDevices(param: BluetoothDevicesParam);
+        getBluetoothDevices(param: BluetoothDevicesParam): void;
         /**监听寻找到新设备的事件 */
-        onBluetoothDeviceFound(callback: (devices: Array<BluetoothDevice>) => void);
+        onBluetoothDeviceFound(callback: (devices: Array<BluetoothDevice>) => void): void;
         /**根据 uuid 获取处于已连接状态的设备 */
-        getConnectedBluetoothDevices(param: ConnectedBluetoothDevicesParam);
+        getConnectedBluetoothDevices(param: ConnectedBluetoothDevicesParam): void;
         /**连接低功耗蓝牙设备 */
-        createBLEConnection(param: BLEConnectionParam);
+        createBLEConnection(param: BLEConnectionParam): void;
         /**断开与低功耗蓝牙设备的连接 */
-        closeBLEConnection(param: BLEConnectionParam);
+        closeBLEConnection(param: BLEConnectionParam): void;
         /**监听低功耗蓝牙连接的错误事件 包括设备丢失 连接异常断开等等 */
-        onBLEConnectionStateChange(callback: (res: { deviceId: string; connected: boolean }) => void);
+        onBLEConnectionStateChange(callback: (res: { deviceId: string; connected: boolean }) => void): void;
         /**获取蓝牙设备所有 service */
-        getBLEDeviceServices(param: BLEDeviceServicesParam);
+        getBLEDeviceServices(param: BLEDeviceServicesParam): void;
         /**获取蓝牙设备所有 characteristic */
-        getBLEDeviceCharacteristics(param: BLEDeviceCharacteristicsParam);
+        getBLEDeviceCharacteristics(param: BLEDeviceCharacteristicsParam): void;
         /**读取低功耗蓝牙设备的特征值的二进制数据值 */
-        readBLECharacteristicValue(parm: BLECharacteristicValueParam);
+        readBLECharacteristicValue(parm: BLECharacteristicValueParam): void;
         /**向低功耗蓝牙设备特征值中写入二进制数据 */
-        writeBLECharacteristicValue(param: WriteBLECharacteristicValueParam);
+        writeBLECharacteristicValue(param: WriteBLECharacteristicValueParam): void;
         /**启用低功耗蓝牙设备特征值变化时的 notify 功能 */
-        notifyBLECharacteristicValueChange(param: BLECharacteristicValueChangedParam);
+        notifyBLECharacteristicValueChange(param: BLECharacteristicValueChangedParam): void;
         /**监听低功耗蓝牙设备的特征值变化 必须先启用notify */
-        onBLECharacteristicValueChange(callback: (res: { deviceId: string; connected: boolean; characteristicId: string; value: ArrayBuffer }) => void);
+        onBLECharacteristicValueChange(callback: (res: { deviceId: string; connected: boolean; characteristicId: string; value: ArrayBuffer }) => void): void;
 
         /**调起用户编辑收货地址原生界面 并在编辑完成后返回用户选择的地址 */
-        chooseAddress(param: AddressParam);
+        chooseAddress(param: AddressParam): void;
 
         /**调起客户端小程序设置界面 返回用户设置的操作结果 */
-        openSetting(param: SettingParam);
+        openSetting(param: SettingParam): void;
         /**获取用户的当前设置 */
-        getSetting(param: SettingParam);
+        getSetting(param: SettingParam): void;
         /**提前授权 */
-        authorize(param: AuthorizeParam);
+        authorize(param: AuthorizeParam): void;
 
         /**关闭所有页面 打开到应用内的某个页面 */
-        reLaunch(param: ReLaunchParam);
+        reLaunch(param: ReLaunchParam): void;
 
         /**将 ArrayBuffer 数据转成 Base64 字符串 */
         arrayBufferToBase64(data: ArrayBuffer): string;
@@ -375,39 +377,39 @@ declare namespace WeApp {
         base64ToArrayBuffer(data: string): ArrayBuffer;
 
         /**显示 loading 提示框 */
-        showLoading(param: LoadingParam);
+        showLoading(param: LoadingParam): void;
         /**隐藏消息提示框 */
-        hideLoading();
+        hideLoading(): void;
 
         /**开始监听加速度数据 */
-        startAccelerometer(param: CallbackParam);
+        startAccelerometer(param: CallbackParam): void;
         /**停止监听加速度数据 */
-        stopAccelerometer(param: CallbackParam);
+        stopAccelerometer(param: CallbackParam): void;
 
         /**设置系统剪贴板的内容 */
-        setClipboardData(param: SetClipboardParam);
+        setClipboardData(param: SetClipboardParam): void;
         /**获取系统剪贴板内容 */
-        getClipboardData(param: CallbackParam);
+        getClipboardData(param: CallbackParam): void;
 
         /**批量添加卡券 */
-        addCard(param: CardParam);
+        addCard(param: CardParam): void;
         /**查看微信卡包中的卡券 */
-        openCard(param: CardParam);
+        openCard(param: CardParam): void;
 
         /**监听网络状态变化 */
-        onNetworkStatusChange(callback: (res: { isConnected: boolean; networkType: string; }) => void);
+        onNetworkStatusChange(callback: (res: { isConnected: boolean; networkType: string; }) => void): void;
 
         /**显示分享按钮 */
-        showShareMenu(param: ShareMenuParam);
+        showShareMenu(param: ShareMenuParam): void;
         /**隐藏分享按钮 */
-        hideShareMenu(param: CallbackParam);
+        hideShareMenu(param: CallbackParam): void;
         /**获取分享详细信息 */
-        getShareInfo(param: ShareInfoParam);
+        getShareInfo(param: ShareInfoParam): void;
         /**更新转发属性 */
-        updateShareMenu(param: ShareMenuParam);
+        updateShareMenu(param: ShareMenuParam): void;
 
         /**获取第三方平台自定义的数据字段 */
-        getExtConfig(param: ExtConfigParam);
+        getExtConfig(param: ExtConfigParam): void;
         /**获取第三方平台自定义的数据字段的同步接口 */
         getExtConfigSync(): object;
         /**
@@ -417,39 +419,39 @@ declare namespace WeApp {
         canIUse(param: string): never;
 
         /**开始搜索附近的iBeacon设备 */
-        startBeaconDiscovery(param: CallbackWithErrMsgParam);
+        startBeaconDiscovery(param: CallbackWithErrMsgParam): void;
         /**停止搜索附近的iBeacon设备 */
-        stopBeaconDiscovery(param: CallbackWithErrMsgParam);
+        stopBeaconDiscovery(param: CallbackWithErrMsgParam): void;
         /**获取所有已搜索到的iBeacon设备 */
-        getBeacons(param: BeaconsParam);
+        getBeacons(param: BeaconsParam): void;
         /**监听 iBeacon 设备的更新事件 */
-        onBeaconUpdate(callback: (res: { beacons: Array<IBeacon> }) => void);
+        onBeaconUpdate(callback: (res: { beacons: Array<IBeacon> }) => void): void;
         /**监听 iBeacon 服务的状态变化 */
-        onBeaconServiceChange(callback: (res: { /**服务目前是否可用 */available: boolean; /**目前是否处于搜索状态 */discovering: boolean }) => void);
+        onBeaconServiceChange(callback: (res: { /**服务目前是否可用 */available: boolean; /**目前是否处于搜索状态 */discovering: boolean }) => void): void;
 
         /**获取屏幕亮度 */
-        getScreenBrightness(param: GetScreenBrightnessParam);
+        getScreenBrightness(param: GetScreenBrightnessParam): void;
         /**设置屏幕亮度 */
-        setScreenBrightness(param: SetScreenBrightnessParam);
+        setScreenBrightness(param: SetScreenBrightnessParam): void;
 
         /**保存联系人到系统通讯录 */
-        addPhoneContact(param: AddPhoneContactParam);
+        addPhoneContact(param: AddPhoneContactParam): void;
         /**使手机发生较长时间的振动 400ms */
-        vibrateLong(param: CallbackParam);
+        vibrateLong(param: CallbackParam): void;
         /**使手机发生较短时间的振动 15ms */
-        vibrateShort(param: CallbackParam);
+        vibrateShort(param: CallbackParam): void;
         /**获取用户过去三十天微信运动步数 需要先调用 wx.login 接口 */
-        getWeRunData(param: GetWeRunDataParam);
+        getWeRunData(param: GetWeRunDataParam): void;
         /**保存图片到系统相册 需要用户授权 scope.writePhotosAlbum */
-        saveImageToPhotosAlbum(param: SaveImageToPhotosAlbumParam);
+        saveImageToPhotosAlbum(param: SaveImageToPhotosAlbumParam): void;
         /**保存视频到系统相册 */
-        saveVideoToPhotosAlbum(param: SaveImageToPhotosAlbumParam);
+        saveVideoToPhotosAlbum(param: SaveImageToPhotosAlbumParam): void;
         /**获取全局唯一的背景音频管理器 */
         getBackgroundAudioManager(): BackgroundAudioManager;
         /**打开同一公众号下关联的另一个小程序 */
-        navigateToMiniProgram(param: NavigateToMiniProgramParam);
+        navigateToMiniProgram(param: NavigateToMiniProgramParam): void;
         /**返回到上一个小程序 只有在当前小程序是被其他小程序打开时可以调用成功 */
-        navigateBackMiniProgram(param: NavigateBackMiniProgramParam);
+        navigateBackMiniProgram(param: NavigateBackMiniProgramParam): void;
         /**
          * 返回一个SelectorQuery对象实例
          * 可以在这个实例上使用select等方法选择节点 并使用boundingClientRect等方法选择需要查询的信息
@@ -554,7 +556,7 @@ declare namespace WeApp {
         url: string;
         /**
          * 下载资源的类型
-         * 用于客户端识别处理 有效值: image|audio|video 
+         * 用于客户端识别处理 有效值: image|audio|video
          */
         type?: string;
         /**HTTP 请求 Header */
@@ -748,13 +750,13 @@ declare namespace WeApp {
 
     interface AudioContext {
         /**设置音频的地址 */
-        setSrc(src: string);
+        setSrc(src: string): void;
         /**播放 */
-        play();
+        play(): void;
         /**暂停 */
-        pause();
+        pause(): void;
         /**跳转到指定位置 单位 s */
-        seek(position: number);
+        seek(position: number): void;
     }
 
     interface InnerAudioContext {
@@ -877,7 +879,7 @@ declare namespace WeApp {
 
     interface RemoveStorageParam extends CallbackParam {
         key: string;
-        success: (res?: { data: any }) => void;
+        success?: (res?: { data: any }) => void;
     }
 
     interface StorageInfoParam extends CallbackParam {
@@ -1014,14 +1016,14 @@ declare namespace WeApp {
     interface PhoneCallParam extends CallbackParam {
         /**需要拨打的电话号码 */
         phoneNumber: string;
-        success: () => void;
+        success?: () => void;
     }
 
     interface ToastParam extends CallbackParam {
         /**提示的内容 */
         title: string;
         /**图标 只支持 success|loading */
-        icon?: string;
+        icon?: 'success' | 'loading';
         /**自定义图标的本地路径 image 的优先级高于 icon */
         image?: string;
         /**提示的延迟时间 单位毫秒 默认 1500 最大为10000 */
@@ -1049,7 +1051,7 @@ declare namespace WeApp {
          * 接口调用成功的回调函数
          * 返回res.confirm==1时 表示用户点击确定按钮
          */
-        success?: (res?: { confirm: boolean }) => void;
+        success?: (res?: { confirm: boolean, cancel: boolean }) => void;
     }
 
     interface ActionSheetParam extends CallbackParam {
@@ -1096,14 +1098,14 @@ declare namespace WeApp {
     /**
      * 动画实例可以调用以下方法来描述动画
      * 调用结束后会返回自身
-     * 支持链式调用的写法 
+     * 支持链式调用的写法
      */
     interface Animation {
         /**
          * 通过动画实例的export方法导出动画数据传递给组件的animation属性
          * export 方法每次调用后会清掉之前的动画操作
          */
-        export();
+        export(): void;
         /**
          * 调用动画操作方法后要调用 step() 来表示一组动画完成
          * 可以在一组动画中调用任意多个动画方法
@@ -1111,7 +1113,7 @@ declare namespace WeApp {
          * 一组动画完成后才会进行下一组动画
          * step 可以传入一个跟 wx.createAnimation() 一样的配置参数用于指定当前组动画的配置
          */
-        step();
+        step(): void;
 
         /**
          * 透明度
@@ -1191,7 +1193,7 @@ declare namespace WeApp {
         skewY(ay: number): Animation;
 
         matrix(a: number, b: number, c: number, d: number, tx: number, ty: number): Animation;
-        matrix3d(a1: number, b1: number, c1: number, d1: number, a2: number, b2: number, c2: number, d2: number, a3: number, b3: number, c3: number, d3: number, a4: number, b4: number, c4: number, d4: number);
+        matrix3d(a1: number, b1: number, c1: number, d1: number, a2: number, b2: number, c2: number, d2: number, a3: number, b3: number, c3: number, d3: number, a4: number, b4: number, c4: number, d4: number): void;
     }
 
     /**
@@ -1204,19 +1206,19 @@ declare namespace WeApp {
         /**获取当前context上存储的绘图动作 */
         getActions(): Array<any>;
         /**清空当前的存储绘图动作 */
-        clearActions();
+        clearActions(): void;
 
         /**
          * 对横纵坐标进行缩放
          * 在调用scale方法后
          * 之后创建的路径其横纵坐标会被缩放
          * 多次调用scale 倍数会相乘
-         * @param scaleWidth 横坐标缩放的倍数 
+         * @param scaleWidth 横坐标缩放的倍数
          * 1=100% 0.5=50% 2=200% 依次类推
          * @param scaleHeight 纵坐标轴缩放的倍数
          * 1=100% 0.5=50% 2=200% 依次类推
          */
-        scale(scaleWidth: number, scaleHeight: number);
+        scale(scaleWidth: number, scaleHeight: number): void;
         /**
          * 对坐标轴进行顺时针旋转
          * 以原点为中心
@@ -1227,7 +1229,7 @@ declare namespace WeApp {
          * @param rotate 旋转角度 以弧度计
          * degrees*Math.PI/180 degrees范围为0~360
          */
-        rotate(rotate: number);
+        rotate(rotate: number): void;
         /**
          * 对坐标原点进行缩放
          * 对当前坐标系的原点(0,0)进行变换
@@ -1235,11 +1237,11 @@ declare namespace WeApp {
          * @param x 水平坐标平移量
          * @param y 竖直坐标平移量
          */
-        translate(x: number, y: number);
+        translate(x: number, y: number): void;
         /**保存当前坐标轴的缩放 旋转 平移信息 */
-        save();
+        save(): void;
         /**恢复之前保存过的坐标轴的缩放 旋转 平移信息 */
-        restore();
+        restore(): void;
         /**
          * 在给定的矩形区域内 清除画布上的像素
          * @param x 矩形区域左上角的x坐标
@@ -1247,14 +1249,14 @@ declare namespace WeApp {
          * @param width 矩形区域的宽度
          * @param height 矩形区域的高度
          */
-        clearRect(x: number, y: number, width: number, height: number);
+        clearRect(x: number, y: number, width: number, height: number): void;
         /**
          * 在画布上绘制被填充的文本
          * @param text 在画布上输出的文本
          * @param x 绘制文本的左上角x坐标位置
          * @param y 绘制文本的左上角y坐标位置
          */
-        fillText(text: string, x?: number, y?: number);
+        fillText(text: string, x?: number, y?: number): void;
         /**
          * 在画布上绘制图像 图像保持原始尺寸
          * @param imageResource	通过chooseImage得到一个文件路径或者一个项目目录内的图片 所要绘制的图片资源
@@ -1263,36 +1265,36 @@ declare namespace WeApp {
          * @param width 图像宽度
          * @param height 图像高度
          */
-        drawImage(imageResource: string, x?: number, y?: number, width?: number, height?: number);
+        drawImage(imageResource: string, x?: number, y?: number, width?: number, height?: number): void;
         /**对当前路径进行填充 */
-        fill();
+        fill(): void;
         /**对当前路径进行描边 */
-        stroke();
+        stroke(): void;
         /**
          * 开始一个路径
          * 开始创建一个路径 需要调用fill或者stroke才会使用路径进行填充或描边 同一个路径内的多次setFillStyle setStrokeStyle setLineWidth等设置 以最后一次设置为准
          */
-        beginPath();
+        beginPath(): void;
         /**关闭一个路径 */
-        closePath();
+        closePath(): void;
         /**
          * 把路径移动到画布中的指定点 但不创建线条
          */
-        moveTo(x: number, y: number);
+        moveTo(x: number, y: number): void;
         /**
          * 添加一个新点 然后在画布中创建从该点到最后指定点的线条
          * @param x 目标位置的x坐标
          * @param y 目标位置的y坐标
          */
-        lineTo(x: number, y: number);
+        lineTo(x: number, y: number): void;
         /**
-         * 添加一个矩形路径到当前路径 
+         * 添加一个矩形路径到当前路径
          * @param x 矩形路径左上角的x坐标
          * @param y 矩形路径左上角的y坐标
          * @param width 矩形路径的宽度
          * @param height 矩形路径的高度
          */
-        rect(x: number, y: number, width: number, height: number);
+        rect(x: number, y: number, width: number, height: number): void;
         /**
          * 画一条弧线
          * @param x 圆的x坐标
@@ -1302,7 +1304,7 @@ declare namespace WeApp {
          * @param eAngle 终止弧度
          * @param counterclockwise 指定弧度的方向是逆时针还是顺时针 默认是false 即顺时针
          */
-        arc(x: number, y: number, r: number, sAngle: number, eAngle: number, counterclockwise?: boolean);
+        arc(x: number, y: number, r: number, sAngle: number, eAngle: number, counterclockwise?: boolean): void;
         /**
          * 创建二次贝塞尔曲线路径
          * @param cpx 贝塞尔控制点的x坐标
@@ -1310,7 +1312,7 @@ declare namespace WeApp {
          * @param x 结束点的x坐标
          * @param y 结束点的y坐标
          */
-        quadraticCurveTo(cpx: number, cpy: number, x: number, y: number);
+        quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
         /**
          * 创建三次方贝塞尔曲线路径
          * @param cp1x 第一个贝塞尔控制点的x坐标
@@ -1320,17 +1322,17 @@ declare namespace WeApp {
          * @param x 结束点的x坐标
          * @param y 结束点的y坐标
          */
-        bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number);
+        bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
         /**
          * 设置纯色填充
          * @param color 设置为填充样式的颜色 'rgb(255, 0, 0)'或'rgba(255, 0, 0, 0.6)'或'#ff0000'格式的颜色字符串
          */
-        setFillStyle(color: string);
+        setFillStyle(color: string): void;
         /**
           * 设置纯色描边
           * @param color 设置为填充样式的颜色 'rgb(255, 0, 0)'或'rgba(255, 0, 0, 0.6)'或'#ff0000'格式的颜色字符串
           */
-        setStrokeStyle(color: string);
+        setStrokeStyle(color: string): void;
         /**
          * 设置阴影
          * @param offsetX 阴影相对于形状在水平方向的偏移
@@ -1338,18 +1340,18 @@ declare namespace WeApp {
          * @param blur 阴影的模糊级别 数值越大越模糊 0~100
          * @param color 阴影的颜色 'rgb(255, 0, 0)'或'rgba(255, 0, 0, 0.6)'或'#ff0000'格式的颜色字符串
          */
-        setShadow(offsetX: number, offsetY: number, blur: number, color: string);
+        setShadow(offsetX: number, offsetY: number, blur: number, color: string): void;
         /**设置字体的字号 */
-        setFontSize(fontSize: number);
+        setFontSize(fontSize: number): void;
         /**设置线条的宽度 */
-        setLineWidth(lineWidth: number);
+        setLineWidth(lineWidth: number): void;
         /**设置线条的结束端点样式 */
-        setLineCap(lineCap: 'butt' | 'round' | 'square');
+        setLineCap(lineCap: 'butt' | 'round' | 'square'): void;
         /**
          * 设置两条线相交时
          * 所创建的拐角类型
          */
-        setLineJoin(lineJoin: 'bevel' | 'round' | 'miter');
+        setLineJoin(lineJoin: 'bevel' | 'round' | 'miter'): void;
         /**
          * 设置最大斜接长度
          * 斜接长度指的是在两条线交汇处内角和外角之间的距离
@@ -1357,7 +1359,7 @@ declare namespace WeApp {
          * 超过最大倾斜长度的
          * 连接处将以 lineJoin 为 bevel 来显示
          */
-        setMiterLimit(miterLimit: number);
+        setMiterLimit(miterLimit: number): void;
         /**
          * 填充一个矩形
          * @param x 矩形路径左上角的x坐标
@@ -1365,7 +1367,7 @@ declare namespace WeApp {
          * @param width 矩形路径的宽度
          * @param height 矩形路径的高度
          */
-        fillRect(x: number, y: number, width: number, height: number);
+        fillRect(x: number, y: number, width: number, height: number): void;
         /**
          * 画一个矩形(非填充)
          * @param x 矩形路径左上角的x坐标
@@ -1373,7 +1375,7 @@ declare namespace WeApp {
          * @param width 矩形路径的宽度
          * @param height 矩形路径的高度
          */
-        strokeRect(x: number, y: number, width: number, height: number);
+        strokeRect(x: number, y: number, width: number, height: number): void;
         /**
          * 创建一个线性的渐变颜色
          * @param x0 起点的x坐标
@@ -1390,9 +1392,9 @@ declare namespace WeApp {
          */
         createCircularGradient(x: number, y: number, r: number): CanvasGradient;
         /**用于设置文字的对齐 */
-        setTextAlign(align: 'left' | 'center' | 'right');
+        setTextAlign(align: 'left' | 'center' | 'right'): void;
         /**用于设置文字的水平对齐 */
-        setTextBaseline(textBaseline: 'top' | 'bottom' | 'middle' | 'normal');
+        setTextBaseline(textBaseline: 'top' | 'bottom' | 'middle' | 'normal'): void;
         /**
          * @description 将之前在绘图上下文中的描述(路径 变形 样式) 画到 canvas 中
          * @since 1.7.0
@@ -1432,7 +1434,7 @@ declare namespace WeApp {
          * 指定颜色渐变点的位置和颜色
          * @param position 位置必须位于0到1之间
          */
-        addColorStop(position: number, color: string);
+        addColorStop(position: number, color: string): void;
     }
 
     interface DrawCanvasParam {
@@ -1455,7 +1457,7 @@ declare namespace WeApp {
         errMsg: string;
         /**
          * 用户允许登录后
-         * 回调内容会带上code(有效期五分钟) 
+         * 回调内容会带上code(有效期五分钟)
          * 开发者需要将code发送到开发者服务器后台
          * 使用code换取session_key api
          * 将code换成openid和session_key
@@ -1599,17 +1601,17 @@ declare namespace WeApp {
     /**通过 mapId 跟一个 <map/> 组件绑定 通过它可以操作对应的 <map/> 组件 */
     interface MapContext {
         /**获取当前地图中心的经纬度 返回的是 gcj02 坐标系 可以用于 wx.openLocation */
-        getCenterLocation(param: GetLocationParam);
+        getCenterLocation(param: GetLocationParam): void;
         /**将地图中心移动到当前定位点 需要配合map组件的show-location使用 */
-        moveToLocation();
+        moveToLocation(): void;
         /**平移marker 带动画 */
-        translateMarker(param: TranslateMarkerParam);
+        translateMarker(param: TranslateMarkerParam): void;
         /**缩放视野展示所有经纬度 */
-        includePoints(param: { points: Array<{ latitude: number, longitude: number; }>; padding?: Array<any> });
+        includePoints(param: { points: Array<{ latitude: number, longitude: number; }>; padding?: Array<any> }): void;
         /**获取当前地图的视野范围 */
-        getRegion(param: CallbackParam);
+        getRegion(param: CallbackParam): void;
         /**获取当前地图的缩放级别 */
-        getScale(param: CallbackParam);
+        getScale(param: CallbackParam): void;
     }
 
     /**自定以分享内容 */
@@ -1622,7 +1624,7 @@ declare namespace WeApp {
         path?: string;
         /**自定义图片路径 可以是本地文件路 代码包文件路径或者网络图片路径 支持PNG及JPG 不传入 imageUrl 则使用默认截图 */
         imageUrl?: string;
-        success?: (res: { errMsg: string; shareTickets: Array<string> }) => void;
+        success?: (res?: { errMsg: string; shareTickets?: Array<string> }) => void;
     }
 
     interface BluetoothAdapterStateParam extends CallbackParam {
@@ -2006,7 +2008,7 @@ declare namespace WeApp {
         selectAll(selector: string): NodesRef;
         /**选择显示区域 可用于获取显示区域的尺寸 滚动位置等信息 */
         selectViewport(): NodesRef;
-        exec(callback?: (res: Array<any>) => void);
+        exec(callback?: (res: Array<any>) => void): void;
     }
 
     interface NodesRef {
