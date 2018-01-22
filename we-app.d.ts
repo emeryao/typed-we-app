@@ -1,3 +1,4 @@
+// #region global declarations
 /**注册一个小程序 */
 declare function App(param: WeApp.AppParam): void;
 
@@ -12,8 +13,11 @@ declare function getCurrentPages(): Array<WeApp.Page>;
 
 declare var wx: WeApp.wx;
 
+// #endregion
+
 declare namespace WeApp {
 
+    // #region WeApp interfaces
     /**指定小程序的生命周期函数等 */
     interface AppParam {
         /**
@@ -487,7 +491,9 @@ declare namespace WeApp {
          */
         chooseInvoiceTitle(param: ChooseInvoiceTitleParam): never;
     }
+    // #endregion
 
+    // #region interfaces
     interface CallbackParam {
         /**接口调用成功的回调函数 */
         success?: (res?: any) => void;
@@ -2106,4 +2112,6 @@ declare namespace WeApp {
         /**接口调用结果 */
         errMsg: string;
     }
+    // #endregion
+
 }
