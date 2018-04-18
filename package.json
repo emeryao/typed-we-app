@@ -1,11 +1,6 @@
 {
-    "name": "typed-we-app",
-    "version": "1.7.0-update.1",
+    "author": "Emeryao",
     "description": "typescript declaration for WeApp",
-    "main": "we-app.d.ts",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "keywords": [
         "weapp",
         "wechat",
@@ -14,10 +9,15 @@
         "types",
         "typescript"
     ],
-    "author": "Emeryao",
+    "license": "MIT",
+    "main": "we-app.d.ts",
+    "name": "typed-we-app",
     "repository": {
         "type": "git",
         "url": "https://github.com/Emeryao/typed-we-app"
     },
-    "license": "MIT"
+    "scripts": {
+        "postinstall": "node scripts/postinstall.js"
+    },
+    "version": "1.7.0-update.2"
 }
