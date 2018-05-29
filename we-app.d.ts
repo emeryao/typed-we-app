@@ -6,7 +6,7 @@ declare function App(param: WeApp.AppParam): void;
 declare function Page(param: WeApp.PageParam): void;
 
 /**注册一个组件 */
-declare function Component(prram: WeApp.ComponentParam): void
+declare function Component(param: WeApp.ComponentParam): void
 
 /**全局函数 可以获取到小程序实例 */
 declare function getApp(): WeApp.AppParam;
