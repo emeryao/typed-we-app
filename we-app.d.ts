@@ -81,41 +81,41 @@ declare namespace WeApp {
 
     /**指定组件的生命周期函数 时间处理函数及方法等  */
     interface ComponentParam {
-      /**组件的对外属性 是属性名到属性设置的映射表
-       * 属性设置中可包含三个字段
-       * type 表示属性类型
-       * value 表示属性初始值
-       * observer 表示属性值被更改时的响应函数
-       */
-      properties?: Object
-      /**组件的内部数据 和 properties 一同用于组件的模版渲染 */
-      data?: Object
+        /**组件的对外属性 是属性名到属性设置的映射表
+         * 属性设置中可包含三个字段
+         * type 表示属性类型
+         * value 表示属性初始值
+         * observer 表示属性值被更改时的响应函数
+         */
+        properties?: Object
+        /**组件的内部数据 和 properties 一同用于组件的模版渲染 */
+        data?: Object
 
-      /**组件的方法 包括事件响应函数和任意的自定义方法 */
-      methods?: {
+        /**组件的方法 包括事件响应函数和任意的自定义方法 */
+        methods?: {
+            [others: string]: any
+        }
+        /**类似于mixins和traits的组件间代码复用机制 */
+        behaviors?: Array<string>
+        /**组件生命周期函数 在组件实例进入页面节点树时执行 注意此时不能调用 setData */
+        created?: Function
+        /**组件生命周期函数 在组件实例进入页面节点树时执行 */
+        atached?: Function
+        /**组件生命周期函数 在组件布局完成后执行 此时可以获取节点信息 */
+        ready?: Function
+        /**组件生命周期函数 在组件实例被移动到节点树另一个位置时执行 */
+        moved?: Function
+        /**组件生命周期函数 在组件实例被从页面节点树移除时执行 */
+        detached?: Function
+        /**组件间关系定义 */
+        relations?: Object
+        /**组件接受的外部样式类 */
+        externalClasses?: Array<string>
+        /**一些组件选项 请参见文档其他部分的说明 */
+        options?: Object
+
+        /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
         [others: string]: any
-      }
-      /**类似于mixins和traits的组件间代码复用机制 */
-      behaviors?: Array<string>
-      /**组件生命周期函数 在组件实例进入页面节点树时执行 注意此时不能调用 setData */
-      created?: Function
-      /**组件生命周期函数 在组件实例进入页面节点树时执行 */
-      atached?: Function
-      /**组件生命周期函数 在组件布局完成后执行 此时可以获取节点信息 */
-      ready?: Function
-      /**组件生命周期函数 在组件实例被移动到节点树另一个位置时执行 */
-      moved?: Function
-      /**组件生命周期函数 在组件实例被从页面节点树移除时执行 */
-      detached?: Function
-      /**组件间关系定义 */
-      relations?: Object
-      /**组件接受的外部样式类 */
-      externalClasses?: Array<string>
-      /**一些组件选项 请参见文档其他部分的说明 */
-      options?: Object
-
-      /**开发者可以添加任意的函数或数据到参数中 用 this 可以访问 */
-      [others: string]: any
     }
 
     /**页面 */
@@ -2035,11 +2035,11 @@ declare namespace WeApp {
 
     interface NavigateToMiniProgramParam extends CallbackWithErrMsgParam {
         /**要打开的小程序 appId*/
-        ppId: string;
+        appId: string;
         /**打开的页面路径 如果为空则打开首页 */
         path?: string
         /**需要传递给目标小程序的数据 目标小程序可在 App.onLaunch() App.onShow() 中获取到这份数据 */
-        extraData: object;
+        extraData?: object;
         /**要打开的小程序版本 有效值 develop trial release*/
         envVersion?: string;
     }
