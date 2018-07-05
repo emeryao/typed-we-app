@@ -100,7 +100,7 @@ declare namespace WeApp {
       /**组件生命周期函数 在组件实例进入页面节点树时执行 注意此时不能调用 setData */
       created?: Function
       /**组件生命周期函数 在组件实例进入页面节点树时执行 */
-      atached?: Function
+      attached?: Function
       /**组件生命周期函数 在组件布局完成后执行 此时可以获取节点信息 */
       ready?: Function
       /**组件生命周期函数 在组件实例被移动到节点树另一个位置时执行 */
@@ -1070,8 +1070,8 @@ declare namespace WeApp {
     interface ToastParam extends CallbackParam {
         /**提示的内容 */
         title: string;
-        /**图标 只支持 success|loading */
-        icon?: 'success' | 'loading';
+        /**图标 只支持 success|loading|none */
+        icon?: 'success' | 'loading' | 'none';
         /**自定义图标的本地路径 image 的优先级高于 icon */
         image?: string;
         /**提示的延迟时间 单位毫秒 默认 1500 最大为10000 */
@@ -1828,7 +1828,7 @@ declare namespace WeApp {
 
     interface LoadingParam extends CallbackParam {
         title: string;
-        mask: boolean;
+        mask?: boolean;
     }
 
     interface SetClipboardParam extends CallbackParam {
