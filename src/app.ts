@@ -1,7 +1,9 @@
 wx.request({
     url: '',
     success: (res) => {
-        console.log(res.data);
+        if (res) {
+            console.log(res.data);
+        }
     },
 });
 
@@ -20,3 +22,7 @@ wx.getBLEDeviceServices({
 let mgr = wx.getBackgroundAudioManager();
 mgr.play();
 mgr.seek(3);
+
+let logMgr = wx.getLogManager();
+
+logMgr.warn(1, 2, 3, 4, 5);

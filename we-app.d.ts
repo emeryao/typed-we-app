@@ -532,6 +532,12 @@ declare namespace WeApp {
          * @description 选择用户的发票抬头
          */
         chooseInvoiceTitle(param: ChooseInvoiceTitleParam): never;
+
+        /**
+         * 获取日志管理器对象
+         * @since 2.1.0
+         */
+        getLogManager(): LogManager;
     }
     // #endregion
 
@@ -2155,6 +2161,13 @@ declare namespace WeApp {
         bankAccount: string;
         /**接口调用结果 */
         errMsg: string;
+    }
+
+    interface LogManager {
+        warn(...arg: any): void;
+        log(...arg: any): void;
+        info(...arg: any): void;
+        debug(...arg: any): void;
     }
     // #endregion
 

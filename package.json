@@ -19,5 +19,5 @@
     "scripts": {
         "postinstall": "node scripts/postinstall.js"
     },
-    "version": "1.7.0-update.5"
+    "version": "1.7.0-update.6"
 }
