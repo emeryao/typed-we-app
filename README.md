@@ -52,4 +52,4 @@ wx.getBLEDeviceServices({
 ```
 
 ## Last Update
-`2018.10.20`
+`2018.11.16`
