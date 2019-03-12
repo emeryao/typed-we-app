@@ -262,7 +262,7 @@ declare namespace WeApp {
         /**从本地缓存中同步移除指定key */
         removeStorageSync(key: string): void;
         /**清理本地数据缓存 */
-        clearStorage(): void;
+        clearStorage(param?: CallbackParam): void;
         /**同步清理本地数据缓存 */
         clearStorageSync(): void;
         /**异步获取当前storage的相关信息 */
