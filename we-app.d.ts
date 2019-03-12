@@ -288,6 +288,10 @@ declare namespace WeApp {
         /**同步获取系统信息 */
         getSystemInfoSync(): SystemInfo;
         /**
+         * 获取全局唯一的版本更新管理器，用于管理小程序更新
+         */
+        getUpdateManager(): UpdateManager;
+        /**
          * 监听重力感应数据
          * 频率 5次/秒
          */
@@ -1051,6 +1055,13 @@ declare namespace WeApp {
         fontSizeSetting: string;
         /**客户端基础库版本 */
         SDKVersion: string;
+    }
+
+    interface UpdateManager {
+        applyUpdate: Function,
+        onCheckForUpdate(callback: Function),
+        onUpdateFailed(callback: Function),
+        onUpdateReady(callback: Function)
     }
 
     interface AccelerometerInfo {
