@@ -1058,10 +1058,10 @@ declare namespace WeApp {
     }
 
     interface UpdateManager {
-        applyUpdate: Function,
-        onCheckForUpdate(callback: Function),
-        onUpdateFailed(callback: Function),
-        onUpdateReady(callback: Function)
+        applyUpdate: Function;
+        onCheckForUpdate(callback: Function): void;
+        onUpdateFailed(callback: Function): void;
+        onUpdateReady(callback: Function): void;
     }
 
     interface AccelerometerInfo {
