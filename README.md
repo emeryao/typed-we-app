@@ -1,3 +1,6 @@
+# ⚠ ARCHIVED since tencent finally got their own *offical* [type definitions](https://github.com/wechat-miniprogram/api-typings) for WeApp
+> so goodbye and thanks for all the contributors
+
 # typed-we-app
 [TypeScript](http://www.typescriptlang.org) declaration file for WeApp API  
 
